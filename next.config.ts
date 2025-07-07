@@ -1,11 +1,9 @@
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['utfs.io', 'img.clerk.com'], // Allow images from UploadThing and Clerk
-  },
-  eslint: {
-    ignoreDuringBuilds: true, // Skip ESLint during `npm run dev` and `npm run build`
+    domains: ['utfs.io','img.clerk.com'], // Add utfs.io to allow images from UploadThing
+     
   },
 };
 
