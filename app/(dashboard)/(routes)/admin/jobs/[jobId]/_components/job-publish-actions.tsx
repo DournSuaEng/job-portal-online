@@ -15,7 +15,7 @@ interface JobPublishActionProps {
 }
 
 const JobPublishAction = ({
-    disabled,
+   
     jobId,
     isPublished,
 }: JobPublishActionProps) => {

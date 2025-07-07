@@ -55,7 +55,7 @@ const JobDescriptionForm = ({ initialData, jobId }: JobDescriptionProps) => {
             toast.success("Job updated successfully!");
             setIsEditing(false);
             router.refresh();
-        } catch (error) {
+        } catch  {
             toast.error("Something went wrong! Please try again.");
         }
     };

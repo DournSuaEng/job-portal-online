@@ -16,10 +16,10 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
-import { useRouter } from "next/navigation"; // Ensure this import is correct for your Next.js version
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
-// Form validation schema
+// Validation schema
 const formSchema = z.object({
   name: z.string().min(1, { message: "Company name cannot be empty" }),
 });
@@ -37,33 +37,31 @@ const CompanyCreatePage = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      // Log the request body to ensure it's correctly formatted
       console.log("Request Body:", values);
 
-      // Make the API request to create a company
       const response = await axios.post("/api/companies", values, {
         headers: {
-          "Content-Type": "application/json", // Ensures correct content type is sent
+          "Content-Type": "application/json",
         },
       });
 
-      // Check if the response contains the company id
       if (response.data?.id) {
         router.push(`/admin/companies/${response.data.id}`);
         toast.success("Company Created");
       } else {
         toast.error("Failed to create company. Please try again.");
       }
-    } catch (error: any) {
-      // Log and display error details
-      if (error.response) {
-        // If the error has a response, log it
-        console.error("Error Response Data:", error.response.data);
-        toast.error(`Failed to create company: ${error.response.data.message || 'Unknown error'}`);
-      } else {
-        // If there's no response, log the general error
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error("Error Response Data:", error.response?.data);
+        toast.error(
+          `Failed to create company: ${error.response?.data?.message || "Unknown error"}`
+        );
+      } else if (error instanceof Error) {
         console.error("Error Message:", error.message);
         toast.error("Failed to create company. Please try again.");
+      } else {
+        toast.error("An unexpected error occurred.");
       }
     }
   };

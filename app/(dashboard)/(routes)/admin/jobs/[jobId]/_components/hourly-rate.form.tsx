@@ -1,11 +1,11 @@
 "use client";
 
 import { Button } from '@/components/ui/button';
-import ComboBox from '@/components/ui/combo-box';
+
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-import { cn } from '@/lib/utils';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Job } from '@prisma/client';
 import axios from 'axios';
@@ -14,7 +14,8 @@ import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { string, z } from 'zod';
+import { z } from 'zod';
+
 
 interface HourlyRateFormProps {
     initialData: Job
@@ -44,11 +45,11 @@ const HourlyRateForm = ({
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
        try {
-        const Response = await axios.patch(`/api/jobs/${jobId}`, values)
+        await axios.patch(`/api/jobs/${jobId}`, values)
         toast.success("Job Update")
         setIsEditing(false)
         router.refresh();
-       } catch (error) {
+       } catch {
         toast.error("Something went wrong!")
        }
     };

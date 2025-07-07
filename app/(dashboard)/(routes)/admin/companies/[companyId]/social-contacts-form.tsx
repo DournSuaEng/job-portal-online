@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Company } from '@prisma/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
-import { Globe, Link as LinkIcon, Linkedin, Mail, MapPin, Pencil } from 'lucide-react';
+import { Globe, Link as  Linkedin, Mail, MapPin, Pencil } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import React, { useState } from 'react';
@@ -57,7 +57,7 @@ const CompanySocialContactsForm = ({ initialData, companyId }: CompanySocialCont
             toast.success("Company updated successfully");
             setIsEditing(false);
             router.refresh();
-        } catch (error) {
+        } catch  {
             toast.error("Something went wrong!");
         }
     };

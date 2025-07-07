@@ -48,7 +48,7 @@ const CategoryForm = ({ initialData, jobId, options }: CategoryFormProps) => {
       toast.success("Job Updated");
       setIsEditing(false);
       router.refresh();
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong!");
     }
   };

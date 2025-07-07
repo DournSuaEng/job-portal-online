@@ -35,7 +35,7 @@ const formSchema = z.object({
 const WhyJoinUsFormForm = ({ initialData, companyId }: WhyJoinUsFormProps) => {
     const [isEditing, setIsEditing] = useState(false);
     const [rollname, setRollname] = useState("");
-    const [skills, setSkills] = useState("");
+   
     const [aiValue, setAiValue]= useState("")
     const [isPrompting, setIsPrompting] = useState(false);
     const router = useRouter();
@@ -55,7 +55,7 @@ const WhyJoinUsFormForm = ({ initialData, companyId }: WhyJoinUsFormProps) => {
             toast.success("company updated successfully!");
             setIsEditing(false);
             router.refresh();
-        } catch (error) {
+        } catch {
             toast.error("Something went wrong! Please try again.");
         }
     };

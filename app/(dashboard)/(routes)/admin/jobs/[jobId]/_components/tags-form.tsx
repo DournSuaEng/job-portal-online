@@ -1,15 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
 import getGenerateivAIResponse from "@/scripts/aistudio";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Job } from "@prisma/client";
 import axios from "axios";
@@ -20,11 +12,13 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 
+// Props
 interface TagsFormProps {
   initialData: Job;
   jobId: string;
 }
 
+// Validation Schema
 const formSchema = z.object({
   tags: z.array(z.string()).min(1, "At least one tag is required"),
 });
@@ -34,7 +28,7 @@ const TagsForm = ({ initialData, jobId }: TagsFormProps) => {
   const [prompt, setPrompt] = useState("");
   const [isPrompting, setIsPrompting] = useState(false);
   const [jobTags, setJobTags] = useState<string[]>(initialData.tags || []);
-  const [isSaved, setIsSaved] = useState(false); // New state to track save action
+  const [isSaved, setIsSaved] = useState(false);
   const router = useRouter();
 
   const formMethods = useForm<z.infer<typeof formSchema>>({
@@ -49,9 +43,9 @@ const TagsForm = ({ initialData, jobId }: TagsFormProps) => {
       await axios.patch(`/api/jobs/${jobId}`, values);
       toast.success("Job updated successfully!");
       setIsEditing(false);
-      setIsSaved(true); // Set the save state to true when save is successful
+      setIsSaved(true);
       router.refresh();
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong! Please try again.");
     }
   };
@@ -73,8 +67,8 @@ const TagsForm = ({ initialData, jobId }: TagsFormProps) => {
       } else {
         toast.error("Invalid response from AI.");
       }
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       toast.error("Something went wrong...");
     } finally {
       setIsPrompting(false);
@@ -103,21 +97,19 @@ const TagsForm = ({ initialData, jobId }: TagsFormProps) => {
 
       {!isEditing ? (
         <div className="flex items-center flex-wrap gap-2 mt-2">
-        {jobTags.length > 0 ? (
-          jobTags.map((tag, index) => (
-            <div
-              className="text-xs flex items-center gap-1 whitespace-nowrap py-1 px-2 rounded-md bg-purple-200 text-black"
-              key={index}
-            >
-              {tag}
-            </div>
-          ))
-        ) : (
-          <p>No Tags</p>
-        )}
-      </div>
-
-
+          {jobTags.length > 0 ? (
+            jobTags.map((tag, index) => (
+              <div
+                className="text-xs flex items-center gap-1 whitespace-nowrap py-1 px-2 rounded-md bg-purple-200 text-black"
+                key={index}
+              >
+                {tag}
+              </div>
+            ))
+          ) : (
+            <p>No Tags</p>
+          )}
+        </div>
       ) : (
         <>
           <div className="flex items-center gap-2 my-2">
@@ -171,9 +163,7 @@ const TagsForm = ({ initialData, jobId }: TagsFormProps) => {
               type="submit"
               onClick={formMethods.handleSubmit(onSubmit)}
               disabled={isSubmitting}
-              className={`${
-                isSaved ? "border-pink-500 text-pink-500" : ""
-              }`} // Conditional styling when saved
+              className={isSaved ? "border-pink-500 text-pink-500" : ""}
             >
               Save
             </Button>
