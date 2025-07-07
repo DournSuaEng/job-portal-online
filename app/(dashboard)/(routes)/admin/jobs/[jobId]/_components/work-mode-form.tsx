@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { string, z } from 'zod';
+import { z } from 'zod';
 
 interface WorkModFormProps { 
     initialData: Job
@@ -59,11 +59,11 @@ const WorkModeForm = ({
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
        try {
-        const Response = await axios.patch(`/api/jobs/${jobId}`, values)
+         await axios.patch(`/api/jobs/${jobId}`, values)
         toast.success("Job Update")
         setIsEditing(false)
         router.refresh();
-       } catch (error) {
+       } catch {
         toast.error("Something went wrong!")
        }
     };

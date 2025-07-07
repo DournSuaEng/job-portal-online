@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Company,Job } from "@prisma/client";
 import axios from "axios";
-import { Loader, Loader2, Plus } from "lucide-react";
+import {  Loader2, Plus } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";

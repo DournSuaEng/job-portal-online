@@ -3,7 +3,7 @@ import Box from "@/components/box";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import HomeSearchContainer from "../_components/home-search-container";
-import Image from "next/image";
+
 import HomeScreemCategoriesContainer from "../_components/home-screen-categories-container";
 import HomeCompaniesList from "../_components/home-companies-list";
 import RecommendedJobsList from "../_components/remommended-jobs";

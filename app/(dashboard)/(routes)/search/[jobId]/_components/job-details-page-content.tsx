@@ -45,7 +45,7 @@ const JobDetailsPageContent = ({
 
     try {
       // Save job application
-      await axios.patch(`/api/users/${userProfile.userId}/appliedJobs`,  jobId );
+      await axios.patch(`/api/users/${userProfile.userId}/appliedJobs`, jobId);
 
       // Send thank you email
       await axios.post("/api/thankyou", {
@@ -55,8 +55,22 @@ const JobDetailsPageContent = ({
 
       toast.success("Successfully applied for the job!");
       setHasApplied(true);
-    } catch (error: any) {
-      console.error("Apply error:", error?.response?.data || error.message);
+    } catch (error: unknown) {
+      // Type guard for axios error
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error &&
+        typeof (error as any).response === "object" &&
+        (error as any).response !== null &&
+        "data" in (error as any).response
+      ) {
+        console.error("Apply error:", (error as any).response.data);
+      } else if (error instanceof Error) {
+        console.error("Apply error:", error.message);
+      } else {
+        console.error("Apply error:", error);
+      }
       toast.error("Something went wrong...");
     } finally {
       setOpen(false);
@@ -108,7 +122,12 @@ const JobDetailsPageContent = ({
             <Link href={`/companies/${jobs.companyId}`} className="flex items-center gap-2">
               {jobs.company.logo && (
                 <div className="relative w-6 h-6">
-                  <Image alt={jobs.company.name} src={jobs.company.logo} fill className="object-contain rounded" />
+                  <Image
+                    alt={jobs.company.name}
+                    src={jobs.company.logo}
+                    fill
+                    className="object-contain rounded"
+                  />
                 </div>
               )}
               <span className="text-sm text-neutral-500">{jobs.company.name}</span>
@@ -119,11 +138,17 @@ const JobDetailsPageContent = ({
         <div className="mt-4">
           {userProfile ? (
             hasApplied ? (
-              <Button variant="outline" className="text-sm text-purple-700 border-purple-500 hover:bg-purple-900 hover:text-white">
+              <Button
+                variant="outline"
+                className="text-sm text-purple-700 border-purple-500 hover:bg-purple-900 hover:text-white"
+              >
                 Already Applied
               </Button>
             ) : (
-              <Button className="text-sm bg-purple-700 hover:bg-purple-900" onClick={() => setOpen(true)}>
+              <Button
+                className="text-sm bg-purple-700 hover:bg-purple-900"
+                onClick={() => setOpen(true)}
+              >
                 Apply
               </Button>
             )

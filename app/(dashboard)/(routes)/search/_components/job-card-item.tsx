@@ -69,13 +69,14 @@ const JobCardItem: React.FC<JobCardItemProps> = ({ job, userId }) => {
       await axios.patch(endpoint);
       toast.success(isSavedByUser ? "Job Removed" : "Job Saved");
       router.refresh();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      // Type-safe error handling
       const errorMessage =
-        error.response?.status === 401
+        error instanceof Error && 'response' in error && (error as any).response?.status === 401
           ? "Please log in to save jobs"
           : "Failed to save job. Please try again.";
       toast.error(errorMessage);
-      console.error(`Error saving job: ${error.message}`);
+      console.error(`Error saving job: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsBookmarkLoading(false);
     }
@@ -193,7 +194,7 @@ const JobCardItem: React.FC<JobCardItemProps> = ({ job, userId }) => {
             </Box>
           )}
 
-Finland          {/* Actions */}
+          {/* Actions */}
           <Box className="flex-col gap-2 mt-auto w-full">
             <Link href={`/search/${job.id}`} className="w-full">
               <Button
