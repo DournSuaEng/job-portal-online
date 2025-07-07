@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "seed": "ts-node scripts/seeds.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.18.0",
