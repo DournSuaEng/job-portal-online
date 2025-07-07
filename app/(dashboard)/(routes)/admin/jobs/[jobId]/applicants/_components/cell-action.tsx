@@ -13,12 +13,12 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 interface CellActionsProps {
-  id: string;
+ 
   fullname: string;
   email: string;
 }
 
-const CellActions = ({ id, fullname, email }: CellActionsProps) => {
+const CellActions = ({  fullname, email }: CellActionsProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isRejection, setIsRejection] = useState(false);
 

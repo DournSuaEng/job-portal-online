@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import axios from "axios";
+import axios, { AxiosError } from "axios"; // Import AxiosError
 import toast from "react-hot-toast";
 
 import Box from "@/components/box";
@@ -56,19 +56,15 @@ const JobDetailsPageContent = ({
       toast.success("Successfully applied for the job!");
       setHasApplied(true);
     } catch (error: unknown) {
-      // Type guard for axios error
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "response" in error &&
-        typeof (error as any).response === "object" &&
-        (error as any).response !== null &&
-        "data" in (error as any).response
-      ) {
-        console.error("Apply error:", (error as any).response.data);
+      // Type guard for AxiosError
+      if (axios.isAxiosError(error)) {
+        // Handle Axios-specific errors
+        console.error("Apply error:", (error as AxiosError).response?.data);
       } else if (error instanceof Error) {
+        // Handle generic errors
         console.error("Apply error:", error.message);
       } else {
+        // Handle unexpected errors
         console.error("Apply error:", error);
       }
       toast.error("Something went wrong...");
