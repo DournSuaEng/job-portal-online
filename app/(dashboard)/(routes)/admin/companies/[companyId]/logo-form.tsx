@@ -43,7 +43,7 @@ const CompanyLogoForm = ({ initialData, companyId }: CompanyLogoFormProps) => {
       toast.success("Logo updated successfully");
       router.refresh();
       setIsEditing(false);
-    } catch (error) {
+    } catch  {
       toast.error("Something went wrong!");
     }
   };

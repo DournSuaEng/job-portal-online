@@ -19,7 +19,7 @@ interface CompanyDescriptionFormProps {
 }
 
 const formSchema = z.object({
-    description: z.string().min(1, { message: "name is required" }),
+    description: z.string().min(1, { message: "Description is required" }),
 });
 
 const CompanyDescriptionForm = ({ initialData, companyId }: CompanyDescriptionFormProps) => {
@@ -28,22 +28,22 @@ const CompanyDescriptionForm = ({ initialData, companyId }: CompanyDescriptionFo
 
     const formMethods = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues:{
+        defaultValues: {
             description: initialData?.description || "",
-        }
+        },
     });
 
     const { isSubmitting, isValid } = formMethods.formState;
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-       try {
-        const Response = await axios.patch(`/api/companies/${companyId}`, values)
-        toast.success("Company Update")
-        setIsEditing(false);
-        router.refresh();
-       } catch (error) {
-        toast.error("Something went wrong!")
-       }
+        try {
+            await axios.patch(`/api/companies/${companyId}`, values);
+            toast.success("Company updated");
+            setIsEditing(false);
+            router.refresh();
+        } catch {
+            toast.error("Something went wrong!");
+        }
     };
 
     const toggleEditing = () => setIsEditing((current) => !current);
@@ -51,19 +51,19 @@ const CompanyDescriptionForm = ({ initialData, companyId }: CompanyDescriptionFo
     return (
         <div className="mt-6 border bg-neutral-100 rounded-md p-4">
             <div className="font-medium flex items-center justify-between">
-                Company description 
-                <Button onClick={toggleEditing} variant={"ghost"}>
+                Company description
+                <Button onClick={toggleEditing} variant="ghost">
                     {isEditing ? <>Cancel</> : <><Pencil className="w-4 h-4 mr-2" />Edit</>}
                 </Button>
             </div>
 
-            {/* Display the title if not editing */}
-            {!isEditing && <p className="text-sm mt-2">{initialData.description}</p>}
-            {/* Display the input form in editing mode */}
+            {!isEditing && (
+                <p className="text-sm mt-2">{initialData.description}</p>
+            )}
 
             {isEditing && (
                 <FormProvider {...formMethods}>
-                    <form onSubmit={formMethods.handleSubmit(onSubmit)} className='space-y-4 mt-4'>
+                    <form onSubmit={formMethods.handleSubmit(onSubmit)} className="space-y-4 mt-4">
                         <FormField
                             control={formMethods.control}
                             name="description"
@@ -72,7 +72,7 @@ const CompanyDescriptionForm = ({ initialData, companyId }: CompanyDescriptionFo
                                     <FormControl>
                                         <Input
                                             disabled={isSubmitting}
-                                            placeholder="e.g. 'This is all about yourself'"
+                                            placeholder="e.g. 'This is all about the company'"
                                             {...field}
                                         />
                                     </FormControl>
@@ -81,7 +81,9 @@ const CompanyDescriptionForm = ({ initialData, companyId }: CompanyDescriptionFo
                             )}
                         />
                         <div className="flex items-center gap-x-2">
-                            <Button disabled={!isValid || isSubmitting} type="submit">Save</Button>
+                            <Button disabled={!isValid || isSubmitting} type="submit">
+                                Save
+                            </Button>
                         </div>
                     </form>
                 </FormProvider>
