@@ -1,7 +1,16 @@
-import {PrismaClient} from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
+// Avoid using `var`, use `let` or `const` in declaration merging
 declare global {
-    var prisma : PrismaClient | undefined
+  // eslint-disable-next-line no-var
+  // `var` is needed here for declaration merging in global scope
+  var prisma: PrismaClient | undefined;
 }
-export var db = globalThis.prisma || new PrismaClient();
-if(process.env.NODE_ENV !== "production") globalThis.prisma =db;
+
+const prisma = globalThis.prisma ?? new PrismaClient();
+
+if (process.env.NODE_ENV !== "production") {
+  globalThis.prisma = prisma;
+}
+
+export const db = prisma;
