@@ -1,9 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 
-// Avoid using `var`, use `let` or `const` in declaration merging
 declare global {
+  // We must use `var` here to extend the global scope in TypeScript.
   // eslint-disable-next-line no-var
-  // `var` is needed here for declaration merging in global scope
   var prisma: PrismaClient | undefined;
 }
 
