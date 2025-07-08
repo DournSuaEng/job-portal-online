@@ -2,29 +2,36 @@ import { useState, useEffect } from "react";
 import { UploadButton } from "../utils/uploadthing";
 import { toast } from "react-hot-toast";
 
-
+interface UploadedFile {
+  url: string;
+  name: string;
+  key?: string;
+  size?: number;
+  type?: string;
+}
 
 interface AttachmentsUploadFormProps {
   disabled?: boolean;
-  onChange: (value: {
-    ufsUrl: any; url: string; name: string 
-}[]) => void;
+  onChange: (value: { url: string; name: string }[]) => void;
   value: { url: string; name: string }[];
 }
 
 const AttachmentsUploadForm = ({ disabled, onChange, value }: AttachmentsUploadFormProps) => {
   const [isMounted, setIsMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
- 
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const handleUploadComplete = (res: any) => {
+  const handleUploadComplete = (res: UploadedFile[]) => {
     console.log("Upload response:", res);
     try {
       if (res && res.length > 0) {
-        const newFiles = res.map((file: any) => ({ url: file.url, name: file.name }));
+        const newFiles = res.map((file) => ({
+          url: file.url,
+          name: file.name,
+        }));
         onChange([...value, ...newFiles]);
         setIsLoading(false);
       } else {

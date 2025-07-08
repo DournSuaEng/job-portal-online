@@ -12,18 +12,17 @@ export async function PATCH(req: Request) {
 
         const values = await req.json();
 
-        let profile = await db.userProfile.findUnique({
+        const profile = await db.userProfile.findUnique({
             where: { userId },
         });
 
-        let userProfile;
         if (profile) {
-            userProfile = await db.userProfile.update({
+            await db.userProfile.update({
                 where: { userId },
                 data: { ...values },
             });
         } else {
-            userProfile = await db.userProfile.create({
+            await db.userProfile.create({
                 data: {
                     userId,
                     ...values,

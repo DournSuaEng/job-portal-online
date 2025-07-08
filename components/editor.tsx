@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import React, { useMemo } from 'react';
+
 
 // Import Froala Editor's CSS
 import "froala-editor/css/froala_editor.pkgd.min.css";
