@@ -66,14 +66,15 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.2.1",
+    "parcel": "^2.15.4",
     "prisma": "^6.11.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-froala-wysiwyg": "^4.5.2",
+    "sass": "1.89.2",
     "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   }
-  
 }
