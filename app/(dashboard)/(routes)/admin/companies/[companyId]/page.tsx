@@ -15,28 +15,23 @@ import WhyJoinUsForm from "./why-join-us-form";
 
 // Verify that none of the imported components include 'use client' unless necessary
 // and that they do not import server-only modules incorrectly.
-
 interface CompanyEditPageProps {
-  params: Promise<{ companyId: string }>;
+  params: { companyId: string }; // ✅ Correct
 }
 
 const CompanyEditPage = async ({ params }: CompanyEditPageProps) => {
-  // Await the params to resolve the companyId
-  const { companyId } = await params;
+  const { companyId } = params; // ✅ No 'await' needed here
 
-  // Verify the MongoDB ID format
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
   if (!validObjectIdRegex.test(companyId)) {
     return redirect("/admin/companies");
   }
 
-  // Authenticate the user
   const { userId } = await auth();
   if (!userId) {
     return redirect("/");
   }
 
-  // Fetch company data
   const company = await db.company.findUnique({
     where: {
       id: companyId,
@@ -48,7 +43,6 @@ const CompanyEditPage = async ({ params }: CompanyEditPageProps) => {
     return redirect("/");
   }
 
-  // Compute completion details
   const requiredFields = [
     company.name,
     company.description,
@@ -76,36 +70,32 @@ const CompanyEditPage = async ({ params }: CompanyEditPageProps) => {
         </div>
       </Link>
 
-      {/* Title */}
       <div className="flex items-center justify-between my-4">
         <div className="flex flex-col gap-y-2">
           <h1 className="text-2xl font-medium">Job Setup</h1>
-          <span className="text-sm text-neutral-500">Complete All Fields {completionText}</span>
+          <span className="text-sm text-neutral-500">
+            Complete All Fields {completionText}
+          </span>
         </div>
       </div>
 
-      {/* Container layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
-        {/* Left container */}
         <div>
           <div className="flex items-center gap-x-2">
             <IconBadge icon={LayoutDashboard} />
             <h2 className="text-xl text-neutral-600">Customize your company</h2>
           </div>
-
           <CompanyName initialData={company} companyId={company.id} />
           <CompanyDescriptionForm initialData={company} companyId={company.id} />
           <CompanyLogoForm initialData={company} companyId={company.id} />
         </div>
 
-        {/* Right container */}
         <div className="space-y-6">
           <div>
             <div className="flex items-center gap-x-2">
               <IconBadge icon={Network} />
               <h2 className="text-xl">Company Social Contacts</h2>
             </div>
-
             <CompanySocialContactsForm initialData={company} companyId={company.id} />
             <CompanyCoverImageForm initialData={company} companyId={company.id} />
           </div>
