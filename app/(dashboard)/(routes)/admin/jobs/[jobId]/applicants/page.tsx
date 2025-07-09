@@ -1,65 +1,64 @@
+// app/(dashboard)/(routes)/admin/jobs/[jobId]/applicants/page.tsx
 import { db } from '@/lib/db';
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
-import React from 'react';
-import { ApplicantColumns, columns } from './_components/columns';
 import { format } from 'date-fns';
 import CustomBreadCrumb from '@/components/custom-bread-crumd';
 import { DataTable } from '@/components/ui/data-table';
 import Box from '@/components/box';
+import { ApplicantColumns, columns } from './_components/columns';
 
-// ✅ Correctly define the expected props for the page
+// Define the props interface
 interface JobApplicantsPageProps {
-  params: {
-    jobId: string;
-  };
+  params: Promise<{ jobId: string }>;
 }
 
 const JobApplicantsPage = async ({ params }: JobApplicantsPageProps) => {
+  // Await the params since it's a Promise in Next.js App Router
+  const { jobId } = await params;
   const { userId } = await auth();
+
+  if (!userId) {
+    redirect('/sign-in');
+  }
 
   const job = await db.job.findUnique({
     where: {
-      id: params.jobId,
-      userId: userId as string,
+      id: jobId,
+      userId,
     },
   });
 
   if (!job) {
-    redirect("/admin/jobs");
+    redirect('/admin/jobs');
   }
 
   const profiles = await db.userProfile.findMany({
     include: {
       resumes: {
         orderBy: {
-          createdAt: "desc",
+          createdAt: 'desc',
         },
       },
-   
+      
     },
   });
 
   const filteredProfiles = profiles.filter((profile) =>
-    profile.appliedJobs.some((appliedJob) => appliedJob.jobId === params.jobId)
+    profile.appliedJobs.some((appliedJob) => appliedJob.jobId === jobId)
   );
 
-  const formattedProfiles: ApplicantColumns[] = filteredProfiles.map((profile) => {
-    const appliedJob = profile.appliedJobs.find((job) => job.jobId === params.jobId);
-    const resume = profile.resumes.find((res) => res.id === profile.activeResumeId);
-
-    return {
-      id: profile.userId,
-      fullname: profile.fullName ?? '',
-      email: profile.email ?? '',
-      contact: profile.contact ?? '',
-      appliedAt: appliedJob?.appliedAt
-        ? format(new Date(appliedJob.appliedAt), 'MMM do, yyyy')
-        : '',
-      resume: resume?.url ?? '',
-      resumeName: resume?.name ?? '',
-    };
-  });
+  const formattedProfiles: ApplicantColumns[] = filteredProfiles.map((profile) => ({
+    id: profile.userId,
+    fullname: profile.fullName ?? '',
+    email: profile.email ?? '',
+    contact: profile.contact ?? '',
+    appliedAt: profile.appliedJobs[0]?.appliedAt
+      ? format(new Date(profile.appliedJobs[0].appliedAt), 'MMM do, yyyy')
+      : '',
+    resume: profile.resumes.find((res) => res.id === profile.activeResumeId)?.url ?? '',
+    resumeName: profile.resumes.find((res) => res.id === profile.activeResumeId)?.name ?? '',
+  }));
 
   return (
     <div className="flex-col p-4 md:p-8 items-center justify-center">
@@ -67,18 +66,14 @@ const JobApplicantsPage = async ({ params }: JobApplicantsPageProps) => {
         <CustomBreadCrumb
           breadCrumbPage="Applicants"
           breadCrumbItem={[
-            { link: "/admin/jobs", label: "Jobs" },
-            { link: "/admin/jobs", label: job.title ?? "" },
+            { link: '/admin/jobs', label: 'Jobs' },
+            { link: `/admin/jobs/${jobId}`, label: job.title ?? '' },
           ]}
         />
       </Box>
 
       <div className="mt-6 w-full">
-        <DataTable
-          columns={columns}
-          data={formattedProfiles}
-          searchKey="fullname"
-        />
+        <DataTable columns={columns} data={formattedProfiles} searchKey="fullname" />
       </div>
     </div>
   );
