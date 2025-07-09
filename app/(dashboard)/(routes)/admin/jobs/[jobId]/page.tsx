@@ -26,33 +26,30 @@ import TagsForm from "./_components/tags-form";
 import CompanyForm from "./_components/company-form";
 import AttachmentsForm from "./_components/attachments-form";
 
-interface JobDetailsPageProps {
+type JobDetailsPageProps = {
   params: {
     jobId: string;
   };
-}
+};
 
 const JobDetailsPage = async ({ params }: JobDetailsPageProps) => {
   const { jobId } = params;
 
-  // Verify MongoDB ID
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
   if (!validObjectIdRegex.test(jobId)) {
     return redirect("/admin/jobs");
   }
 
-  // Authenticate
   const { userId } = await auth();
-  if (!userId) {
-    return redirect("/");
-  }
+  if (!userId) return redirect("/");
 
-  // Fetch job data
   const job = await db.job.findUnique({
     where: { id: jobId, userId },
     include: {
       attachments: {
-        orderBy: { createAt: "desc" },
+        orderBy: {
+          createAt: "desc",
+        },
       },
     },
   });
@@ -68,10 +65,13 @@ const JobDetailsPage = async ({ params }: JobDetailsPageProps) => {
     orderBy: { createAt: "desc" },
   });
 
-  const requiredFields = [job.title, job.description, job.imageUrl, job.categoryId];
-  const totalFields = requiredFields.length;
-  const completionFields = requiredFields.filter(Boolean).length;
-  const completionText = `(${completionFields}/${totalFields})`;
+  const requiredFields = [
+    job.title,
+    job.description,
+    job.imageUrl,
+    job.categoryId,
+  ];
+  const completionText = `(${requiredFields.filter(Boolean).length}/${requiredFields.length})`;
   const isComplete = requiredFields.every(Boolean);
 
   return (
