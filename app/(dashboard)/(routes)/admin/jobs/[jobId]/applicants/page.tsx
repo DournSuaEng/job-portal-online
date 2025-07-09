@@ -8,7 +8,14 @@ import CustomBreadCrumb from '@/components/custom-bread-crumd';
 import { DataTable } from '@/components/ui/data-table';
 import Box from '@/components/box';
 
-const JobApplicantsPage = async ({ params }: { params: { jobId: string } }) => {
+// ✅ Correctly define the expected props for the page
+interface JobApplicantsPageProps {
+  params: {
+    jobId: string;
+  };
+}
+
+const JobApplicantsPage = async ({ params }: JobApplicantsPageProps) => {
   const { userId } = await auth();
 
   const job = await db.job.findUnique({
@@ -29,6 +36,7 @@ const JobApplicantsPage = async ({ params }: { params: { jobId: string } }) => {
           createdAt: "desc",
         },
       },
+   
     },
   });
 
@@ -36,23 +44,28 @@ const JobApplicantsPage = async ({ params }: { params: { jobId: string } }) => {
     profile.appliedJobs.some((appliedJob) => appliedJob.jobId === params.jobId)
   );
 
-  const formattedProfiles: ApplicantColumns[] = filteredProfiles.map((profile) => ({
-    id: profile.userId,
-    fullname: profile.fullName ?? "",
-    email: profile.email ?? "",
-    contact: profile.contact ?? "",
-    appliedAt: profile.appliedJobs.find((job) => job.jobId === params.jobId)?.appliedAt
-      ? format(new Date(profile.appliedJobs.find((job) => job.jobId === params.jobId)?.appliedAt ?? ""), "MMM do, yyyy")
-      : "",
-    resume: profile.resumes.find((res) => res.id === profile.activeResumeId)?.url ?? "",
-    resumeName: profile.resumes.find((res) => res.id === profile.activeResumeId)?.name ?? "",
-  }));
+  const formattedProfiles: ApplicantColumns[] = filteredProfiles.map((profile) => {
+    const appliedJob = profile.appliedJobs.find((job) => job.jobId === params.jobId);
+    const resume = profile.resumes.find((res) => res.id === profile.activeResumeId);
+
+    return {
+      id: profile.userId,
+      fullname: profile.fullName ?? '',
+      email: profile.email ?? '',
+      contact: profile.contact ?? '',
+      appliedAt: appliedJob?.appliedAt
+        ? format(new Date(appliedJob.appliedAt), 'MMM do, yyyy')
+        : '',
+      resume: resume?.url ?? '',
+      resumeName: resume?.name ?? '',
+    };
+  });
 
   return (
-    <div className='flex-col p-4 md:p-8 items-center justify-center'>
+    <div className="flex-col p-4 md:p-8 items-center justify-center">
       <Box>
         <CustomBreadCrumb
-          breadCrumbPage='Applicants'
+          breadCrumbPage="Applicants"
           breadCrumbItem={[
             { link: "/admin/jobs", label: "Jobs" },
             { link: "/admin/jobs", label: job.title ?? "" },
@@ -60,11 +73,11 @@ const JobApplicantsPage = async ({ params }: { params: { jobId: string } }) => {
         />
       </Box>
 
-      <div className='mt-6 w-full'>
+      <div className="mt-6 w-full">
         <DataTable
           columns={columns}
           data={formattedProfiles}
-          searchKey='fullname'
+          searchKey="fullname"
         />
       </div>
     </div>
