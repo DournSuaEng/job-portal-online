@@ -1,7 +1,7 @@
-// Ensure this is a Server Component (no "use client" directive)
+// app/(dashboard)/(routes)/companies/[companyId]/page.tsx
 import { IconBadge } from "@/components/icon-badge";
 import { db } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server"; // Server-side Clerk auth
+import { auth } from "@clerk/nextjs/server";
 import { ArrowLeft, LayoutDashboard, Network } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -13,36 +13,35 @@ import CompanyCoverImageForm from "./cover-image-form";
 import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 
-// Verify that none of the imported components include 'use client' unless necessary
-// and that they do not import server-only modules incorrectly.
 interface CompanyEditPageProps {
-  params: { companyId: string }; // ✅ Correct
+  params: { companyId: string };
 }
 
-const CompanyEditPage = async ({ params }: CompanyEditPageProps) => {
-  const { companyId } = params; // ✅ No 'await' needed here
+export default async function CompanyEditPage({ params }: CompanyEditPageProps) {
+  const { companyId } = params;
 
+  // Validate companyId format (MongoDB ObjectId)
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
   if (!validObjectIdRegex.test(companyId)) {
     return redirect("/admin/companies");
   }
 
+  // Check authentication
   const { userId } = await auth();
   if (!userId) {
     return redirect("/");
   }
 
+  // Fetch company data
   const company = await db.company.findUnique({
-    where: {
-      id: companyId,
-      userId,
-    },
+    where: { id: companyId, userId },
   });
 
   if (!company) {
-    return redirect("/");
+    return redirect("/admin/companies");
   }
 
+  // Calculate completion status
   const requiredFields = [
     company.name,
     company.description,
@@ -58,8 +57,8 @@ const CompanyEditPage = async ({ params }: CompanyEditPageProps) => {
     company.whyJoinUs,
   ];
   const totalFields = requiredFields.length;
-  const completionFields = requiredFields.filter(Boolean).length;
-  const completionText = `(${completionFields}/${totalFields})`;
+  const completedFields = requiredFields.filter(Boolean).length;
+  const completionText = `(${completedFields}/${totalFields})`;
 
   return (
     <div className="p-6">
@@ -72,7 +71,7 @@ const CompanyEditPage = async ({ params }: CompanyEditPageProps) => {
 
       <div className="flex items-center justify-between my-4">
         <div className="flex flex-col gap-y-2">
-          <h1 className="text-2xl font-medium">Job Setup</h1>
+          <h1 className="text-2xl font-medium">Company Setup</h1>
           <span className="text-sm text-neutral-500">
             Complete All Fields {completionText}
           </span>
@@ -111,6 +110,4 @@ const CompanyEditPage = async ({ params }: CompanyEditPageProps) => {
       </div>
     </div>
   );
-};
-
-export default CompanyEditPage;
+}
