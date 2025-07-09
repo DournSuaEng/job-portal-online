@@ -3,14 +3,15 @@ import { UploadThingError } from "uploadthing/server";
 
 const f = createUploadthing();
 
-const auth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
+// Auth function no longer uses req param since it was unused
+const auth = () => ({ id: "fakeId" });
 
 // FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
   // Image uploader
   imageUploader: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
-    .middleware(async ({ req }) => {
-      const user = await auth(req);
+    .middleware(async () => {
+      const user = await auth();
       if (!user) throw new UploadThingError("Unauthorized");
       return { userId: user.id };
     })
@@ -22,8 +23,8 @@ export const ourFileRouter = {
 
   // PDF uploader
   pdfUpload: f({ pdf: { maxFileSize: "4MB", maxFileCount: 1 } })
-    .middleware(async ({ req }) => {
-      const user = await auth(req);
+    .middleware(async () => {
+      const user = await auth();
       if (!user) throw new UploadThingError("Unauthorized");
       return { userId: user.id };
     })
