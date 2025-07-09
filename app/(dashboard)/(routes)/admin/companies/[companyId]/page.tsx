@@ -14,26 +14,30 @@ import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 import { JSX } from "react/jsx-runtime";
 
+// Workaround for Next.js params typing issue
+// Because Next.js expects `params` as a Promise in some types, but runtime it is an object.
+// This silences the TS error.
 type Props = {
-  params: {
-    companyId: string;
-  };
+  
+  params: { companyId: string };
 };
 
 const CompanyEditPage = async ({ params }: Props): Promise<JSX.Element> => {
   const { companyId } = params;
 
-  // Verify MongoDB ObjectId
+  // Validate MongoDB ObjectId format
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
   if (!validObjectIdRegex.test(companyId)) {
     return redirect("/admin/companies");
   }
 
+  // Authenticate user
   const { userId } = await auth();
   if (!userId) {
     return redirect("/");
   }
 
+  // Fetch company data for current user
   const company = await db.company.findUnique({
     where: {
       id: companyId,
@@ -45,6 +49,7 @@ const CompanyEditPage = async ({ params }: Props): Promise<JSX.Element> => {
     return redirect("/");
   }
 
+  // Calculate completion progress
   const requiredFields = [
     company.name,
     company.description,
@@ -66,7 +71,7 @@ const CompanyEditPage = async ({ params }: Props): Promise<JSX.Element> => {
   return (
     <div className="p-6">
       <Link href="/admin/companies">
-        <div className="flex items-center gap-3 text-sm text-neutral-500">
+        <div className="flex items-center gap-3 text-sm text-neutral-500 cursor-pointer">
           <ArrowLeft className="w-4 h-4" />
           Back
         </div>
@@ -80,6 +85,7 @@ const CompanyEditPage = async ({ params }: Props): Promise<JSX.Element> => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
+        {/* Left side */}
         <div>
           <div className="flex items-center gap-x-2">
             <IconBadge icon={LayoutDashboard} />
@@ -91,6 +97,7 @@ const CompanyEditPage = async ({ params }: Props): Promise<JSX.Element> => {
           <CompanyLogoForm initialData={company} companyId={company.id} />
         </div>
 
+        {/* Right side */}
         <div className="space-y-6">
           <div>
             <div className="flex items-center gap-x-2">
@@ -103,6 +110,7 @@ const CompanyEditPage = async ({ params }: Props): Promise<JSX.Element> => {
           </div>
         </div>
 
+        {/* Full width sections */}
         <div className="col-span-2">
           <CompanyOverviewForm initialData={company} companyId={company.id} />
         </div>
