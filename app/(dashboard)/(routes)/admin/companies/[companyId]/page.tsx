@@ -13,6 +13,9 @@ import CompanyCoverImageForm from "./cover-image-form";
 import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 
+// Verify that none of the imported components include 'use client' unless necessary
+// and that they do not import server-only modules incorrectly.
+
 interface CompanyEditPageProps {
   params: Promise<{ companyId: string }>;
 }
