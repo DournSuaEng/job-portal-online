@@ -1,21 +1,26 @@
+// app/(dashboard)/(routes)/admin/companies/[companyId]/page.tsx
 import { IconBadge } from "@/components/icon-badge";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { ArrowLeft, LayoutDashboard, Network } from "lucide-react";
 import { redirect } from "next/navigation";
-
 import Link from "next/link";
 import CompanyName from "./name-form";
 import CompanyDescriptionForm from "./description-form";
-
 import CompanyLogoForm from "./logo-form";
 import CompanySocialContactsForm from "./social-contacts-form";
 import CompanyCoverImageForm from "./cover-image-form";
 import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 
+// Define the props interface
+interface CompanyEditPageProps {
+  params: {
+    companyId: string;
+  };
+}
 
-const CompanyEditPage = async ({ params }: { params: { companyId: string } }) => {
+const CompanyEditPage = async ({ params }: CompanyEditPageProps) => {
   const { companyId } = params;
 
   // Verify the MongoDB ID format
@@ -58,8 +63,8 @@ const CompanyEditPage = async ({ params }: { params: { companyId: string } }) =>
     company.whyJoinUs,
   ];
   const totalFields = requiredFields.length;
-  const completionFields = requiredFields.filter(Boolean).length;
-  const completionText = `(${completionFields}/${totalFields})`;
+  const completedFields = requiredFields.filter(Boolean).length;
+  const completionText = `(${completedFields}/${totalFields})`;
 
   return (
     <div className="p-6">
@@ -73,8 +78,10 @@ const CompanyEditPage = async ({ params }: { params: { companyId: string } }) =>
       {/* Title */}
       <div className="flex items-center justify-between my-4">
         <div className="flex flex-col gap-y-2">
-          <h1 className="text-2xl font-medium">Job Setup</h1>
-          <span className="text-sm text-neutral-500">Complete All Fields {completionText}</span>
+          <h1 className="text-2xl font-medium">Company Setup</h1>
+          <span className="text-sm text-neutral-500">
+            Complete All Fields {completionText}
+          </span>
         </div>
       </div>
 
