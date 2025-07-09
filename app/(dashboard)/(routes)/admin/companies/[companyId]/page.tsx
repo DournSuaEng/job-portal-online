@@ -1,21 +1,25 @@
+// Ensure this is a Server Component (no "use client" directive)
 import { IconBadge } from "@/components/icon-badge";
 import { db } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server"; // Server-side Clerk auth
 import { ArrowLeft, LayoutDashboard, Network } from "lucide-react";
 import { redirect } from "next/navigation";
-
 import Link from "next/link";
 import CompanyName from "./name-form";
 import CompanyDescriptionForm from "./description-form";
-
 import CompanyLogoForm from "./logo-form";
 import CompanySocialContactsForm from "./social-contacts-form";
 import CompanyCoverImageForm from "./cover-image-form";
 import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 
-const CompanyEditPage = async ({ params }: { params: { companyId: string } }) => {
-  const { companyId } = params;
+interface CompanyEditPageProps {
+  params: Promise<{ companyId: string }>;
+}
+
+const CompanyEditPage = async ({ params }: CompanyEditPageProps) => {
+  // Await the params to resolve the companyId
+  const { companyId } = await params;
 
   // Verify the MongoDB ID format
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
