@@ -17,7 +17,7 @@ export async function PATCH(req: Request, { params }: { params: { jobId: string 
         if (!jobId) {
             return new NextResponse("Job ID is required", { status: 400 });
         }
-        const job = await db.job.update ({
+        await db.job.update ({
             where: {
                 id: jobId,
                 userId,

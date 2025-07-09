@@ -1,10 +1,6 @@
 import { compileThankYouEmailTemplate, sendMail } from "@/lib/mail";
 import { NextResponse } from "next/server";
 
-/**
- * POST /api/thankyou
- * Sends a thank-you email to a job applicant.
- */
 export const POST = async (req: Request): Promise<NextResponse> => {
   try {
     const { email, fullName } = await req.json();
@@ -31,10 +27,17 @@ export const POST = async (req: Request): Promise<NextResponse> => {
       return NextResponse.json({ error: "Mail not sent" }, { status: 500 });
     }
 
-  } catch (error: any) {
-    console.error("Mail API error:", error?.message || error);
+  } catch (error) {
+    // Narrow error type to unknown, then check if it's an Error instance
+    let errorMessage = "Internal Server Error";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      console.error("Mail API error:", errorMessage);
+    } else {
+      console.error("Mail API error:", error);
+    }
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: errorMessage },
       { status: 500 }
     );
   }

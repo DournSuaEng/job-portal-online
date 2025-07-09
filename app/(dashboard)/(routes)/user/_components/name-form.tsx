@@ -48,7 +48,7 @@ const NameForm = ({ initialData, userId }: NameFormProps) => {
       formMethods.reset(values); // Reset form with updated values
       setIsEditing(false);
       router.refresh();
-    } catch (error) {
+    } catch {
       toast.error('Something went wrong!');
     }
   };

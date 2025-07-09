@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export const POST = async (req: Request): Promise<NextResponse> => {
   try {
-    const { email, fullName } = await req.json();
+    const { email, fullName } = await req.json() as { email?: string; fullName?: string };
 
     if (!email || !fullName) {
       return NextResponse.json(
@@ -27,9 +27,12 @@ export const POST = async (req: Request): Promise<NextResponse> => {
     } else {
       return NextResponse.json({ error: "Mail not sent" }, { status: 500 });
     }
-
-  } catch (error: any) {
-    console.error("Mail API error:", error?.message || error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Mail API error:", error.message);
+    } else {
+      console.error("Mail API error:", error);
+    }
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

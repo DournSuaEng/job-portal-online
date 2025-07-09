@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UserProfile } from '@prisma/client';
 import axios from 'axios';
-import { Contact, Pencil, UserCircle } from 'lucide-react';
+import { Contact, Pencil} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -47,7 +47,7 @@ const ContactForm = ({ initialData, userId }: ContactFormProps) => {
       formMethods.reset(values); // Reset form with updated values
       setIsEditing(false);
       router.refresh();
-    } catch (error) {
+    } catch  {
       toast.error('Something went wrong!');
     }
   };

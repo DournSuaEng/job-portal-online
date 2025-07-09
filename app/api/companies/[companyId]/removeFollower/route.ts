@@ -34,7 +34,7 @@ export const PATCH = async (req: Request, { params }: { params: { companyId: str
       }
       // remove userid from the follower
       const userIndex = company?.followers.indexOf(userId)
-      let updatedCompany
+     
       if(userIndex !== 1){
         const updatedCompany = await db.company.update({
           where: {

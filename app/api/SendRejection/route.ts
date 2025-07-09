@@ -1,9 +1,9 @@
-import { compileSendRejectionEmailTemplate, compileSendSelectedEmialTemplate, compileThankYouEmailTemplate, sendMail } from "@/lib/mail";
+import { compileSendRejectionEmailTemplate, sendMail } from "@/lib/mail";
 import { NextResponse } from "next/server";
 
 /**
- * POST /api/thankyou
- * Sends a thank-you email to a job applicant.
+ * POST /api/SendRejection
+ * Sends a rejection email to a job applicant.
  */
 export const POST = async (req: Request): Promise<NextResponse> => {
   try {
@@ -31,10 +31,17 @@ export const POST = async (req: Request): Promise<NextResponse> => {
       return NextResponse.json({ error: "Mail not sent" }, { status: 500 });
     }
 
-  } catch (error: any) {
-    console.error("Mail API error:", error?.message || error);
+  } catch (error: unknown) {
+    let errorMessage = "Internal Server Error";
+    if (error instanceof Error) {
+      console.error("Mail API error:", error.message);
+      errorMessage = error.message;
+    } else {
+      console.error("Mail API error:", error);
+    }
+
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: errorMessage },
       { status: 500 }
     );
   }

@@ -9,7 +9,7 @@ import { db } from '@/lib/db';
 import CustomBreadCrumb from '@/components/custom-bread-crumd';
 import ContactForm from './_components/contact-form';
 import ResumeForm from './_components/resume-form';
-import AttachmentsForm from './_components/resume-form';
+
 import { DataTable } from '@/components/ui/data-table';
 import { AppliedJobsColumns, columns } from './_components/column';
 import { format } from 'date-fns';
@@ -28,7 +28,7 @@ const ProfilePage = async () => {
   }
 
   // Fetch profile
-  let profile = await db.userProfile.findUnique({
+  const profile = await db.userProfile.findUnique({
     where: {
       userId,
     },

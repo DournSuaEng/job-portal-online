@@ -8,7 +8,7 @@ const imageRemove=async(imageUrl: string | string[])=>{
         await utapi.deleteFiles(imageUrl)
         
         return{ success: true}
-    } catch (error) {
+    } catch  {
         return { success: false}
     }
 }

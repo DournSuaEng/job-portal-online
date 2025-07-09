@@ -3,9 +3,8 @@
 
 import Image from "next/image";
 import Box from "@/components/box";
-import { useKeenSlider } from "keen-slider/react";
+import { useKeenSlider, KeenSliderPlugin, KeenSliderInstance } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import { useEffect, useRef } from "react";
 
 // 👉 Images for the slider
 const images = [
@@ -17,7 +16,7 @@ const images = [
 ];
 
 // 👉 Autoplay plugin for keen-slider
-function AutoplayPlugin(slider: any) {
+const AutoplayPlugin: KeenSliderPlugin = (slider: KeenSliderInstance) => {
   let timeout: ReturnType<typeof setTimeout>;
   let mouseOver = false;
 
@@ -48,7 +47,7 @@ function AutoplayPlugin(slider: any) {
   slider.on("dragStarted", clearNextTimeout);
   slider.on("animationEnded", nextTimeout);
   slider.on("updated", nextTimeout);
-}
+};
 
 const BannerSlider = () => {
   const [sliderRef] = useKeenSlider<HTMLDivElement>(
@@ -77,7 +76,7 @@ const BannerSlider = () => {
               alt={`Slide ${index + 1}`}
               fill
               className="object-cover w-full h-full transition-all duration-1000 ease-in-out rounded-2xl"
-              priority={index === 0} // preloads first image
+              priority={index === 0}
             />
           </div>
         ))}
