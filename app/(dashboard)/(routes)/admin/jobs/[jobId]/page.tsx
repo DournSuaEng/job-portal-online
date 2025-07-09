@@ -20,11 +20,12 @@ import CompanyForm from "./_components/company-form";
 import AttachmentsForm from "./_components/attachments-form";
 
 // Define the props type explicitly
-interface JobDetailsPageProps {
-  params: { jobId: string };
+interface PageProps {
+  params: Record<string, string>;
+  searchParams?: Record<string, string | string[]>;
 }
 
-const JobDetailsPage = async ({ params }: JobDetailsPageProps) => {
+const JobDetailsPage = async ({ params }: PageProps) => {
   const { jobId } = params; // Destructure directly from params
 
   // Verify the MongoDB ID
