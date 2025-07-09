@@ -24,10 +24,9 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 
-// Custom truncate function to replace lodash
+// Custom truncate function
 const truncateText = (text: string, length: number, omission = "...") => {
-  if (text.length <= length) return text;
-  return text.slice(0, length) + omission;
+  return text.length <= length ? text : text.slice(0, length) + omission;
 };
 
 interface JobCardItemProps {
@@ -50,10 +49,10 @@ const experienceData = [
 const JobCardItem: React.FC<JobCardItemProps> = ({ job, userId }) => {
   const router = useRouter();
   const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
+
   const isSavedByUser = userId && job.savedUsers?.includes(userId) || false;
   const SavedUsersIcon = isSavedByUser ? BookmarkCheck : Bookmark;
 
-  // Memoize the formatted date to avoid recalculations
   const formattedDate = useMemo(
     () => formatDistanceToNow(new Date(job.createdAt), { addSuffix: true }),
     [job.createdAt]
@@ -70,13 +69,20 @@ const JobCardItem: React.FC<JobCardItemProps> = ({ job, userId }) => {
       toast.success(isSavedByUser ? "Job Removed" : "Job Saved");
       router.refresh();
     } catch (error: unknown) {
-      // Type-safe error handling
-      const errorMessage =
-        error instanceof Error && 'response' in error && (error as any).response?.status === 401
-          ? "Please log in to save jobs"
-          : "Failed to save job. Please try again.";
+      let errorMessage = "Failed to save job. Please try again.";
+
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          errorMessage = "Please log in to save jobs";
+        }
+        console.error(`Error saving job: ${error.message}`);
+      } else if (error instanceof Error) {
+        console.error(`Error saving job: ${error.message}`);
+      } else {
+        console.error("Error saving job: Unknown error");
+      }
+
       toast.error(errorMessage);
-      console.error(`Error saving job: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsBookmarkLoading(false);
     }

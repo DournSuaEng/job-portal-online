@@ -1,13 +1,16 @@
+// page-content.tsx
 "use client";
 
-import { Job } from "@prisma/client";
+import { Job, Company } from "@prisma/client";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import JobCardItem from "./job-card-item";
 import { fadeInOut } from "@/animations";
 
+type JobWithCompany = Job & { company: Company | null };
+
 interface PageContentProps {
-  jobs: Job[];
+  jobs: JobWithCompany[];
   userId: string | null;
 }
 
@@ -24,7 +27,7 @@ const PageContent = ({ jobs, userId }: PageContentProps) => {
             priority
             sizes="(max-width: 768px) 100vw, 50vw"
             onError={(e) => {
-              e.currentTarget.src = "/img/fallback.png";
+              console.error("Image failed to load", e);
             }}
           />
         </div>
@@ -44,7 +47,7 @@ const PageContent = ({ jobs, userId }: PageContentProps) => {
           className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-6 gap-2"
         >
           {jobs.map((job) => (
-            <JobCardItem key={job.id} job={job as any} userId={userId} />
+            <JobCardItem key={job.id} job={job} userId={userId} />
           ))}
         </motion.div>
       </AnimatePresence>
