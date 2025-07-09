@@ -3,6 +3,7 @@ import nodemailer from "nodemailer";
 import Handlebars from "handlebars";
 import fs from "fs/promises";
 import path from "path";
+import type { SentMessageInfo } from "nodemailer"; // Import specific type for nodemailer
 
 // Load templates from files to reduce in-memory string size
 const loadTemplate = async (templateName: string): Promise<string> => {
@@ -43,15 +44,13 @@ export const compileSendRejectionEmailTemplate = async (name: string): Promise<s
  */
 export const sendMail = async ({
   to,
-  name,
   subject,
   body,
 }: {
   to: string;
-  name: string;
   subject: string;
   body: string;
-}): Promise<any> => {
+}): Promise<SentMessageInfo> => {
   const { SMTP_EMAIL, SMTP_PASSWORD } = process.env;
 
   if (!SMTP_EMAIL || !SMTP_PASSWORD) {
