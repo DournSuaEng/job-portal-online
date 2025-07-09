@@ -1,40 +1,22 @@
-// lib/mail.ts
 import nodemailer from "nodemailer";
-import Handlebars from "handlebars";
-import fs from "fs/promises";
-import path from "path";
-
-// Load templates from files to reduce in-memory string size
-const loadTemplate = async (templateName: string): Promise<string> => {
-  const templatePath = path.join(process.cwd(), "templates", `${templateName}.hbs`);
-  const templateBuffer = await fs.readFile(templatePath);
-  return templateBuffer.toString("utf-8");
-};
+import handlebars from "handlebars";
+import { ThankYouTemplate } from "./designs/thank-you";
+import { SendSelectedTemplate } from "./designs/send-selected-template";
+import { SendRejectionTemplate } from "./designs/send-rejection-template";
 
 /**
  * Compiles the "Thank You" email template with the given name.
  */
-export const compileThankYouEmailTemplate = async (name: string): Promise<string> => {
-  const templateContent = await loadTemplate("thank-you");
-  const template = Handlebars.compile(templateContent);
+export const compileThankYouEmailTemplate = (name: string): string => {
+  const template = handlebars.compile(ThankYouTemplate);
   return template({ name });
 };
-
-/**
- * Compiles the "Selected" email template with the given name.
- */
-export const compileSendSelectedEmailTemplate = async (name: string): Promise<string> => {
-  const templateContent = await loadTemplate("send-selected");
-  const template = Handlebars.compile(templateContent);
+export const compileSendSelectedEmialTemplate = (name: string): string => {
+  const template = handlebars.compile(SendSelectedTemplate);
   return template({ name });
 };
-
-/**
- * Compiles the "Rejection" email template with the given name.
- */
-export const compileSendRejectionEmailTemplate = async (name: string): Promise<string> => {
-  const templateContent = await loadTemplate("send-rejection");
-  const template = Handlebars.compile(templateContent);
+export const compileSendRejectionEmailTemplate = (name: string): string => {
+  const template = handlebars.compile(SendRejectionTemplate);
   return template({ name });
 };
 
@@ -51,7 +33,7 @@ export const sendMail = async ({
   name: string;
   subject: string;
   body: string;
-}): Promise<any> => {
+}) => {
   const { SMTP_EMAIL, SMTP_PASSWORD } = process.env;
 
   if (!SMTP_EMAIL || !SMTP_PASSWORD) {
@@ -79,7 +61,7 @@ export const sendMail = async ({
       from: `"Job Portal" <${SMTP_EMAIL}>`,
       to,
       subject,
-      html: body, // Use compiled HTML directly
+      html: `<p>Hi ${name},</p><p>${body}</p>`,
     });
 
     return result;
