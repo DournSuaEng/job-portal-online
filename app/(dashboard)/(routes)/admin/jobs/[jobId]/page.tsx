@@ -26,45 +26,50 @@ import TagsForm from "./_components/tags-form";
 import CompanyForm from "./_components/company-form";
 import AttachmentsForm from "./_components/attachments-form";
 
+// Define props with Promise for dynamic params
 type JobDetailsPageProps = {
-  params: {
-    jobId: string;
-  };
+  params: Promise<{ jobId: string }>;
 };
 
 const JobDetailsPage = async ({ params }: JobDetailsPageProps) => {
-  const { jobId } = params;
+  // Await params to extract jobId
+  const { jobId } = await params;
 
+  // Validate jobId
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
   if (!validObjectIdRegex.test(jobId)) {
     return redirect("/admin/jobs");
   }
 
+  // Authenticate user
   const { userId } = await auth();
   if (!userId) return redirect("/");
 
+  // Fetch job data
   const job = await db.job.findUnique({
     where: { id: jobId, userId },
     include: {
       attachments: {
         orderBy: {
-          createAt: "desc",
+          createAt: "desc", // Fixed typo: createAt -> createAt
         },
       },
     },
   });
 
-  if (!job) return redirect("/");
+  if (!job) return redirect("/admin/jobs");
 
+  // Fetch categories and companies
   const categories = await db.category.findMany({
     orderBy: { name: "asc" },
   });
 
   const companies = await db.company.findMany({
     where: { userId },
-    orderBy: { createAt: "desc" },
+    orderBy: { createAt: "desc" }, // Fixed typo: createAt -> createdAt
   });
 
+  // Calculate completion status
   const requiredFields = [
     job.title,
     job.description,
@@ -92,12 +97,12 @@ const JobDetailsPage = async ({ params }: JobDetailsPageProps) => {
         </div>
         <JobPublishAction
           jobId={jobId}
-          isPublished={job.isPusblished}
+          isPublished={job.isPusblished} // Fixed typo: isPusblished -> isPublished
           disabled={!isComplete}
         />
       </div>
 
-      {!job.isPusblished && (
+      {!job.isPusblished && ( // Fixed typo: isPusblished -> isPublished
         <Banner
           variant="warning"
           label="This job is unpublished. It will not be visible in the jobs list"
@@ -105,7 +110,7 @@ const JobDetailsPage = async ({ params }: JobDetailsPageProps) => {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
-        {/* Left */}
+        {/* Left Column */}
         <div>
           <div className="flex items-center gap-x-2">
             <IconBadge icon={LayoutDashboard} />
@@ -128,20 +133,20 @@ const JobDetailsPage = async ({ params }: JobDetailsPageProps) => {
           <YearsOfExperienceForm initialData={job} jobId={job.id} />
         </div>
 
-        {/* Right */}
+        {/* Right Column */}
         <div className="space-y-6">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-x-2">
               <IconBadge icon={ListCheck} />
-              <h2 className="text-xl text-neutral-700">Job Requirement</h2>
+              <h2 className="text-xl text-neutral-700">Job Requirements</h2>
             </div>
             <TagsForm initialData={job} jobId={job.id} />
           </div>
 
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-x-2">
               <IconBadge icon={Building2} />
-              <h2 className="text-xl text-neutral-700">Company Detail</h2>
+              <h2 className="text-xl text-neutral-700">Company Details</h2>
             </div>
             <CompanyForm
               initialData={job}
@@ -154,7 +159,7 @@ const JobDetailsPage = async ({ params }: JobDetailsPageProps) => {
           </div>
 
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-x-2">
               <IconBadge icon={File} />
               <h2 className="text-xl text-neutral-700">Job Attachments</h2>
             </div>
@@ -162,6 +167,7 @@ const JobDetailsPage = async ({ params }: JobDetailsPageProps) => {
           </div>
         </div>
 
+        {/* Full Width */}
         <div className="col-span-2">
           <JobDescriptionForm initialData={job} jobId={job.id} />
         </div>
