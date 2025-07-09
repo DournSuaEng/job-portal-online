@@ -1,4 +1,3 @@
-// app/(dashboard)/(routes)/admin/companies/[companyId]/page.tsx
 import { IconBadge } from "@/components/icon-badge";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
@@ -13,15 +12,14 @@ import CompanyCoverImageForm from "./cover-image-form";
 import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 
-// Define the props interface
+// Define the props interface correctly for Next.js dynamic routes
 interface CompanyEditPageProps {
-  params: {
-    companyId: string;
-  };
+  params: Promise<{ companyId: string }>;
 }
 
 const CompanyEditPage = async ({ params }: CompanyEditPageProps) => {
-  const { companyId } = params;
+  // Await the params since it's a Promise in Next.js App Router
+  const { companyId } = await params;
 
   // Verify the MongoDB ID format
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
@@ -63,8 +61,8 @@ const CompanyEditPage = async ({ params }: CompanyEditPageProps) => {
     company.whyJoinUs,
   ];
   const totalFields = requiredFields.length;
-  const completedFields = requiredFields.filter(Boolean).length;
-  const completionText = `(${completedFields}/${totalFields})`;
+  const completionFields = requiredFields.filter(Boolean).length;
+  const completionText = `(${completionFields}/${totalFields})`;
 
   return (
     <div className="p-6">
@@ -78,10 +76,8 @@ const CompanyEditPage = async ({ params }: CompanyEditPageProps) => {
       {/* Title */}
       <div className="flex items-center justify-between my-4">
         <div className="flex flex-col gap-y-2">
-          <h1 className="text-2xl font-medium">Company Setup</h1>
-          <span className="text-sm text-neutral-500">
-            Complete All Fields {completionText}
-          </span>
+          <h1 className="text-2xl font-medium">Job Setup</h1>
+          <span className="text-sm text-neutral-500">Complete All Fields {completionText}</span>
         </div>
       </div>
 
