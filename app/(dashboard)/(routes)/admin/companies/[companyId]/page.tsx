@@ -13,9 +13,9 @@ import CompanyCoverImageForm from "./cover-image-form";
 import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 
-interface CompanyEditPageProps {
+type CompanyEditPageProps = {
   params: { companyId: string };
-}
+};
 
 export default async function CompanyEditPage({ params }: CompanyEditPageProps) {
   const { companyId } = params;
@@ -32,10 +32,16 @@ export default async function CompanyEditPage({ params }: CompanyEditPageProps) 
     return redirect("/");
   }
 
-  // Fetch company data
-  const company = await db.company.findUnique({
-    where: { id: companyId, userId },
-  });
+  // Fetch company data with error handling
+  let company;
+  try {
+    company = await db.company.findUnique({
+      where: { id: companyId, userId },
+    });
+  } catch (error) {
+    console.error("Failed to fetch company:", error);
+    return redirect("/admin/companies");
+  }
 
   if (!company) {
     return redirect("/admin/companies");
