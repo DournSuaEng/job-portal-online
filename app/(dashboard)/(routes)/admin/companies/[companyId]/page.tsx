@@ -12,28 +12,23 @@ import CompanyCoverImageForm from "./cover-image-form";
 import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 
-// Define the interface to match Next.js expectations for dynamic routes
 interface CompanyEditPageProps {
-  params: Promise<{ companyId: string }>; // params is a Promise in Next.js 15
+  params: Promise<{ companyId: string }>;
 }
 
 export default async function CompanyEditPage({ params }: CompanyEditPageProps) {
-  // Resolve the params Promise to get the companyId
   const { companyId } = await params;
 
-  // Validate companyId format (MongoDB ObjectId)
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
   if (!validObjectIdRegex.test(companyId)) {
     return redirect("/admin/companies");
   }
 
-  // Check authentication
   const { userId } = await auth();
   if (!userId) {
     return redirect("/");
   }
 
-  // Fetch company data
   const company = await db.company.findUnique({
     where: { id: companyId, userId },
   });
@@ -42,7 +37,6 @@ export default async function CompanyEditPage({ params }: CompanyEditPageProps) 
     return redirect("/admin/companies");
   }
 
-  // Calculate completion status
   const requiredFields = [
     company.name,
     company.description,
