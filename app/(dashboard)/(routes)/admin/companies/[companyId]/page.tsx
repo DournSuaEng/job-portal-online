@@ -15,16 +15,16 @@ import WhyJoinUsForm from "./why-join-us-form";
 
 // Update the interface to reflect that params is a Promise
 interface CompanyEditPageProps {
-  params: Promise<{ companyId: string }>;
+  params: Promise<{ companyId: string[] }>;
 }
 
-export default async function CompanyEditPage({ params }: CompanyEditPageProps) {
+export default async function CompanyEditPage({ params, }: CompanyEditPageProps) {
   // Await the params Promise to get the companyId
   const { companyId } = await params;
 
   // Validate companyId format (MongoDB ObjectId)
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
-  if (!validObjectIdRegex.test(companyId)) {
+  if (!validObjectIdRegex.test(companyId[1])) {
     return redirect("/admin/companies");
   }
 
