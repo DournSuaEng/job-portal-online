@@ -90,7 +90,7 @@ export const Footer = () => {
 
       <Separator />
       <Box className="justify-center p-4 text-sm text-muted-foreground">
-        All rights reserved &copy; 2024
+        All Right Student Western &copy; 2025
       </Box>
     </Box>
   );

@@ -1,4 +1,4 @@
-// app/(dashboard)/(routes)/companies/[companyId]/page.tsx
+// app/(dashboard)/(routes)/admin/companies/[companyId]/page.tsx
 import { IconBadge } from "@/components/icon-badge";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
@@ -13,12 +13,14 @@ import CompanyCoverImageForm from "./cover-image-form";
 import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 
+// Update the interface to reflect that params is a Promise
 interface CompanyEditPageProps {
-  params: { companyId: string };
+  params: Promise<{ companyId: string }>;
 }
 
 export default async function CompanyEditPage({ params }: CompanyEditPageProps) {
-  const { companyId } = params;
+  // Await the params Promise to get the companyId
+  const { companyId } = await params;
 
   // Validate companyId format (MongoDB ObjectId)
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
