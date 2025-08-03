@@ -12,39 +12,30 @@ import CompanyCoverImageForm from "./cover-image-form";
 import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 
-// Use Next.js built-in type for page props
-import type { NextPage } from "next";
-
+// Define props with correct Promise type
 interface CompanyEditPageProps {
   params: Promise<{ companyId: string }>;
 }
 
-// Use NextPage type to ensure compatibility
-const CompanyEditPage: NextPage<CompanyEditPageProps> = async ({ params }) => {
-  const { companyId } = await params;
+export default async function CompanyEditPage({ params }: CompanyEditPageProps) {
+  const { companyId } = await params; // Await the Promise to get companyId
 
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
   if (!validObjectIdRegex.test(companyId)) {
-    return redirect("/admin/companies?error=Invalid company ID");
+    return redirect("/admin/companies");
   }
 
   const { userId } = await auth();
   if (!userId) {
-    return redirect("/?error=Please log in");
+    return redirect("/");
   }
 
-  let company;
-  try {
-    company = await db.company.findUnique({
-      where: { id: companyId, userId },
-    });
-  } catch (error) {
-    console.error("Error fetching company:", error);
-    return redirect("/admin/companies?error=Failed to load company data");
-  }
+  const company = await db.company.findUnique({
+    where: { id: companyId, userId },
+  });
 
   if (!company) {
-    return redirect("/admin/companies?error=Company not found");
+    return redirect("/admin/companies");
   }
 
   const requiredFields = [
@@ -115,6 +106,4 @@ const CompanyEditPage: NextPage<CompanyEditPageProps> = async ({ params }) => {
       </div>
     </div>
   );
-};
-
-export default CompanyEditPage;
+}
