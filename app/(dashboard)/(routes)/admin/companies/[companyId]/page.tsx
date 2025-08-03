@@ -12,7 +12,15 @@ import CompanyCoverImageForm from "./cover-image-form";
 import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 
-export default async function CompanyEditPage({ params }: { params: Promise<{ companyId: string }> }) {
+// Use Next.js built-in type for page props
+import type { NextPage } from "next";
+
+interface CompanyEditPageProps {
+  params: Promise<{ companyId: string }>;
+}
+
+// Use NextPage type to ensure compatibility
+const CompanyEditPage: NextPage<CompanyEditPageProps> = async ({ params }) => {
   const { companyId } = await params;
 
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
@@ -107,4 +115,6 @@ export default async function CompanyEditPage({ params }: { params: Promise<{ co
       </div>
     </div>
   );
-}
+};
+
+export default CompanyEditPage;
