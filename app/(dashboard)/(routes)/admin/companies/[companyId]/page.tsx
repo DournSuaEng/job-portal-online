@@ -1,4 +1,3 @@
-// app/(dashboard)/(routes)/admin/companies/[companyId]/page.tsx
 import { IconBadge } from "@/components/icon-badge";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
@@ -14,11 +13,11 @@ import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 
 type CompanyEditPageProps = {
-  params: Promise<{ companyId: string[1] }>;
+  params: { companyId: string };
 };
 
 export default async function CompanyEditPage({ params }: CompanyEditPageProps) {
-  const { companyId } = await params; // Await params to resolve the Promise
+  const { companyId } = params;
 
   // Validate companyId format (MongoDB ObjectId)
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
@@ -27,7 +26,7 @@ export default async function CompanyEditPage({ params }: CompanyEditPageProps) 
   }
 
   // Check authentication
-  const { userId } = await auth();
+  const { userId } =await auth();
   if (!userId) {
     return redirect("/");
   }
