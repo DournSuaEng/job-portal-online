@@ -12,29 +12,31 @@ import CompanyCoverImageForm from "./cover-image-form";
 import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 
-interface CompanyEditPageProps {
-  params: Promise<{ companyId: string }>;
-}
-
-export default async function CompanyEditPage({ params }: CompanyEditPageProps) {
+export default async function CompanyEditPage({ params }: { params: Promise<{ companyId: string }> }) {
   const { companyId } = await params;
 
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
   if (!validObjectIdRegex.test(companyId)) {
-    return redirect("/admin/companies");
+    return redirect("/admin/companies?error=Invalid company ID");
   }
 
   const { userId } = await auth();
   if (!userId) {
-    return redirect("/");
+    return redirect("/?error=Please log in");
   }
 
-  const company = await db.company.findUnique({
-    where: { id: companyId, userId },
-  });
+  let company;
+  try {
+    company = await db.company.findUnique({
+      where: { id: companyId, userId },
+    });
+  } catch (error) {
+    console.error("Error fetching company:", error);
+    return redirect("/admin/companies?error=Failed to load company data");
+  }
 
   if (!company) {
-    return redirect("/admin/companies");
+    return redirect("/admin/companies?error=Company not found");
   }
 
   const requiredFields = [
