@@ -9,8 +9,9 @@ import CompanyDetailContentPage from "./_components/company-detail-content";
 
 
 
-const CompanyDetailPage =async({params}:{params: {companyId: string}})=>{
-   
+const CompanyDetailPage =async (props:{params: Promise<{companyId: string}>}) => {
+    const params = await props.params;
+
     const {userId} =await auth()
     const company = await db.company.findUnique({
         where: {
@@ -33,7 +34,7 @@ const CompanyDetailPage =async({params}:{params: {companyId: string}})=>{
             createdAt: "desc"
         }
     })
-   
+
     return( 
         <div className="flex-col">
             <Box className="mt-4 items-center justify-start gap-2 mb-4 px-2">

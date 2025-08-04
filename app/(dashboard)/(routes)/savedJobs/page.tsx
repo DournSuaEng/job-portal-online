@@ -10,22 +10,23 @@ import getJobs from '@/actions/get-jobs';
 
 
 interface SearchProps {
-    searchParams: {
+    searchParams: Promise<{
     title: string;
     categoryId: string;
     createdAtFilter: string;
     shiftTiming: string;
     workMode: string;
     yearsOfExperience: string;
-  };
+  }>;
 }
 
-const SavedJobsPage = async ({searchParams} : SearchProps) => {
-    const {userId} =await  auth();
-    if(!userId){
-        redirect("/")
-    }
-    const jobs = await getJobs({...searchParams,savedJobs: true})
+const SavedJobsPage = async (props: SearchProps) => {
+  const searchParams = await props.searchParams;
+  const {userId} =await  auth();
+  if(!userId){
+      redirect("/")
+  }
+  const jobs = await getJobs({...searchParams,savedJobs: true})
   return (
     <div className='flex-col'>
       <Box className='mt-4 items-center justify-start gap-2 mb-4 px-2'>

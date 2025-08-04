@@ -2,7 +2,8 @@ import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-export const PATCH = async (req: Request, { params }: { params: { companyId: string } }) => {
+export const PATCH = async (req: Request, props: { params: Promise<{ companyId: string }> }) => {
+  const params = await props.params;
   try {
     const { userId } = await auth();
 
