@@ -1,10 +1,11 @@
-// app/(dashboard)/(routes)/companies/[companyId]/page.tsx
+"use client"
 import { IconBadge } from "@/components/icon-badge";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { ArrowLeft, LayoutDashboard, Network } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+
 import CompanyName from "./name-form";
 import CompanyDescriptionForm from "./description-form";
 import CompanyLogoForm from "./logo-form";
@@ -13,26 +14,29 @@ import CompanyCoverImageForm from "./cover-image-form";
 import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 
-interface CompanyEditPageProps {
-  params: { companyId: string };
-}
+// ✅ Define type for dynamic route
+type PageProps = {
+  params: {
+    companyId: string;
+  };
+};
 
-export default async function CompanyEditPage({ params }: CompanyEditPageProps) {
+export default async function CompanyEditPage({ params }: PageProps) {
   const { companyId } = params;
 
-  // Validate companyId format (MongoDB ObjectId)
+  // ✅ Validate ObjectId (MongoDB)
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
   if (!validObjectIdRegex.test(companyId)) {
     return redirect("/admin/companies");
   }
 
-  // Check authentication
+  // ✅ Auth check (Clerk)
   const { userId } = await auth();
   if (!userId) {
     return redirect("/");
   }
 
-  // Fetch company data
+  // ✅ Get company by ID and user
   const company = await db.company.findUnique({
     where: { id: companyId, userId },
   });
@@ -41,7 +45,7 @@ export default async function CompanyEditPage({ params }: CompanyEditPageProps) 
     return redirect("/admin/companies");
   }
 
-  // Calculate completion status
+  // ✅ Completion logic
   const requiredFields = [
     company.name,
     company.description,
