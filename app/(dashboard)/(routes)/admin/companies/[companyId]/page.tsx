@@ -1,4 +1,5 @@
-"use client"
+// app/(dashboard)/(routes)/companies/[companyId]/page.tsx
+
 import { IconBadge } from "@/components/icon-badge";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
@@ -14,38 +15,38 @@ import CompanyCoverImageForm from "./cover-image-form";
 import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 
-// ✅ Define type for dynamic route
+// Define type for dynamic route params
 type PageProps = {
-  params: {
-    companyId: string;
-  };
+  params: Promise<{ companyId: string }>; // Fixed to match Next.js 15 async params
 };
 
+// Explicitly mark as Server Component
 export default async function CompanyEditPage({ params }: PageProps) {
-  const { companyId } = params;
+  // Resolve async params
+  const { companyId } = await params;
 
-  // ✅ Validate ObjectId (MongoDB)
+  // Validate ObjectId (MongoDB)
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
   if (!validObjectIdRegex.test(companyId)) {
-    return redirect("/admin/companies");
+    return redirect("/companies");
   }
 
-  // ✅ Auth check (Clerk)
+  // Auth check (Clerk)
   const { userId } = await auth();
   if (!userId) {
     return redirect("/");
   }
 
-  // ✅ Get company by ID and user
+  // Get company by ID and user
   const company = await db.company.findUnique({
     where: { id: companyId, userId },
   });
 
   if (!company) {
-    return redirect("/admin/companies");
+    return redirect("/companies");
   }
 
-  // ✅ Completion logic
+  // Completion logic
   const requiredFields = [
     company.name,
     company.description,
@@ -66,7 +67,7 @@ export default async function CompanyEditPage({ params }: PageProps) {
 
   return (
     <div className="p-6">
-      <Link href="/admin/companies">
+      <Link href="/companies">
         <div className="flex items-center gap-3 text-sm text-neutral-500">
           <ArrowLeft className="w-4 h-4" />
           Back
