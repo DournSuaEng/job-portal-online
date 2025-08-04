@@ -8,9 +8,7 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  experimental: {
-    serverComponentsExternalPackages: ["@clerk/nextjs"],
-  },
+  
 };
 
 export default nextConfig;
