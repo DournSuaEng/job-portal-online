@@ -1,5 +1,3 @@
-// app/(dashboard)/(routes)/companies/[companyId]/page.tsx
-
 import { IconBadge } from "@/components/icon-badge";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
@@ -15,38 +13,45 @@ import CompanyCoverImageForm from "./cover-image-form";
 import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 
-// Define type for dynamic route params
+// ✅ Optional props for safe fallback
 type PageProps = {
-  params: Promise<{ companyId: string }>; // Fixed to match Next.js 15 async params
+  params?: { companyId?: string };
+  searchParams?: { [key: string]: string | string[] };
 };
 
-// Explicitly mark as Server Component
 export default async function CompanyEditPage({ params }: PageProps) {
-  // Resolve async params
-  const { companyId } = await params;
+  const companyId = params?.companyId;
 
-  // Validate ObjectId (MongoDB)
+  // Fallback redirect if ID is missing
+  if (!companyId) {
+    return redirect("/companies");
+  }
+
+  // ✅ Validate MongoDB ObjectId format
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
   if (!validObjectIdRegex.test(companyId)) {
     return redirect("/companies");
   }
 
-  // Auth check (Clerk)
+  // ✅ Auth
   const { userId } = await auth();
   if (!userId) {
     return redirect("/");
   }
 
-  // Get company by ID and user
+  // ✅ Fetch company by ID & userId
   const company = await db.company.findUnique({
-    where: { id: companyId, userId },
+    where: {
+      id: companyId,
+      userId,
+    },
   });
 
   if (!company) {
     return redirect("/companies");
   }
 
-  // Completion logic
+  // ✅ Profile completion calculation
   const requiredFields = [
     company.name,
     company.description,
@@ -61,6 +66,7 @@ export default async function CompanyEditPage({ params }: PageProps) {
     company.overview,
     company.whyJoinUs,
   ];
+
   const totalFields = requiredFields.length;
   const completedFields = requiredFields.filter(Boolean).length;
   const completionText = `(${completedFields}/${totalFields})`;
@@ -116,4 +122,3 @@ export default async function CompanyEditPage({ params }: PageProps) {
     </div>
   );
 }
-
