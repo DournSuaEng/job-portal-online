@@ -1,3 +1,5 @@
+// app/(dashboard)/(routes)/companies/[companyId]/page.tsx
+
 import { IconBadge } from "@/components/icon-badge";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
@@ -13,41 +15,38 @@ import CompanyCoverImageForm from "./cover-image-form";
 import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 
-// ⚠️ IMPORTANT: params is a Promise per Next.js 15+ typing
+// Define type for dynamic route params
 type PageProps = {
-  params: Promise<{ companyId: string }>;
-  searchParams?: { [key: string]: string | string[] };
+  params: Promise<{ companyId: string }>; // Fixed to match Next.js 15 async params
 };
 
+// Explicitly mark as Server Component
 export default async function CompanyEditPage({ params }: PageProps) {
-  // Await params because it's a Promise
+  // Resolve async params
   const { companyId } = await params;
 
-  // Validate MongoDB ObjectId format
+  // Validate ObjectId (MongoDB)
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
   if (!validObjectIdRegex.test(companyId)) {
     return redirect("/companies");
   }
 
-  // Authenticate user
+  // Auth check (Clerk)
   const { userId } = await auth();
   if (!userId) {
     return redirect("/");
   }
 
-  // Fetch company belonging to user
+  // Get company by ID and user
   const company = await db.company.findUnique({
-    where: {
-      id: companyId,
-      userId,
-    },
+    where: { id: companyId, userId },
   });
 
   if (!company) {
     return redirect("/companies");
   }
 
-  // Calculate profile completion progress
+  // Completion logic
   const requiredFields = [
     company.name,
     company.description,
@@ -62,7 +61,6 @@ export default async function CompanyEditPage({ params }: PageProps) {
     company.overview,
     company.whyJoinUs,
   ];
-
   const totalFields = requiredFields.length;
   const completedFields = requiredFields.filter(Boolean).length;
   const completionText = `(${completedFields}/${totalFields})`;
@@ -118,3 +116,4 @@ export default async function CompanyEditPage({ params }: PageProps) {
     </div>
   );
 }
+
