@@ -15,23 +15,23 @@ import CompanyCoverImageForm from "./cover-image-form";
 import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 
-// Define type for dynamic route params
+// ✅ CORRECT: No Promise here
 type PageProps = {
-  params: Promise<{ companyId: string }>; // Fixed to match Next.js 15 async params
+  params: {
+    companyId: string;
+  };
 };
 
-// Explicitly mark as Server Component
 export default async function CompanyEditPage({ params }: PageProps) {
-  // Resolve async params
-  const { companyId } = await params;
+  const { companyId } = params;
 
-  // Validate ObjectId (MongoDB)
+  // Validate MongoDB ObjectId
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
   if (!validObjectIdRegex.test(companyId)) {
     return redirect("/companies");
   }
 
-  // Auth check (Clerk)
+  // Clerk auth
   const { userId } = await auth();
   if (!userId) {
     return redirect("/");
@@ -61,6 +61,7 @@ export default async function CompanyEditPage({ params }: PageProps) {
     company.overview,
     company.whyJoinUs,
   ];
+
   const totalFields = requiredFields.length;
   const completedFields = requiredFields.filter(Boolean).length;
   const completionText = `(${completedFields}/${totalFields})`;
@@ -116,4 +117,3 @@ export default async function CompanyEditPage({ params }: PageProps) {
     </div>
   );
 }
-
