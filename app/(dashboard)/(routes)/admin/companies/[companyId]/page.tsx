@@ -13,33 +13,29 @@ import CompanyCoverImageForm from "./cover-image-form";
 import CompanyOverviewForm from "./company-overview";
 import WhyJoinUsForm from "./why-join-us-form";
 
-// ✅ Optional props for safe fallback
+// ⚠️ IMPORTANT: params is a Promise per Next.js 15+ typing
 type PageProps = {
-  params?: { companyId?: string };
+  params: Promise<{ companyId: string }>;
   searchParams?: { [key: string]: string | string[] };
 };
 
 export default async function CompanyEditPage({ params }: PageProps) {
-  const companyId = params?.companyId;
+  // Await params because it's a Promise
+  const { companyId } = await params;
 
-  // Fallback redirect if ID is missing
-  if (!companyId) {
-    return redirect("/companies");
-  }
-
-  // ✅ Validate MongoDB ObjectId format
+  // Validate MongoDB ObjectId format
   const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
   if (!validObjectIdRegex.test(companyId)) {
     return redirect("/companies");
   }
 
-  // ✅ Auth
+  // Authenticate user
   const { userId } = await auth();
   if (!userId) {
     return redirect("/");
   }
 
-  // ✅ Fetch company by ID & userId
+  // Fetch company belonging to user
   const company = await db.company.findUnique({
     where: {
       id: companyId,
@@ -51,7 +47,7 @@ export default async function CompanyEditPage({ params }: PageProps) {
     return redirect("/companies");
   }
 
-  // ✅ Profile completion calculation
+  // Calculate profile completion progress
   const requiredFields = [
     company.name,
     company.description,
