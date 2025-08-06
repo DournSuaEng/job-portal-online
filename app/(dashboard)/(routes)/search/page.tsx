@@ -6,15 +6,15 @@ import CategoriesList from "./_components/categories-list";
 import PageContent from "./_components/page-content";
 import AppliedFilters from "./_components/applied-filters";
 
-// Optional metadata (SEO)
+// Optional metadata for SEO
 export const metadata = {
   title: "Search Jobs",
   description: "Find and filter jobs that match your interests and experience.",
 };
 
-// Fix: use correct props structure
+// ✅ Correctly typed props
 type PageProps = {
-  params: {}; // not used in this page
+  params: Record<string, string>; // Fixes lint error
   searchParams?: {
     title?: string;
     categoryId?: string;
