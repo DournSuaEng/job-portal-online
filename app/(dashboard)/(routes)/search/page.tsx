@@ -1,4 +1,5 @@
-
+// app/(dashboard)/(routes)/search/page.tsx
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import SearchContainer from "@/components/search-container";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
@@ -73,7 +74,8 @@ const SearchPage = async ({ params, searchParams }: PageProps) => {
         {/* Page Content */}
         <PageContent jobs={jobs} userId={userId} />
 
-   
+        {/* Add SpeedInsights for performance monitoring */}
+        <SpeedInsights />
       </div>
     </>
   );
