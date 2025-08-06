@@ -6,15 +6,15 @@ import CategoriesList from "./_components/categories-list";
 import PageContent from "./_components/page-content";
 import AppliedFilters from "./_components/applied-filters";
 
-// Optional metadata for SEO
+// Optional SEO metadata
 export const metadata = {
   title: "Search Jobs",
-  description: "Find and filter jobs that match your interests and experience.",
+  description: "Find jobs filtered by role, category, experience, and more.",
 };
 
-// ✅ Correctly typed props
+// ✅ Correct PageProps type for Next.js App Router
 type PageProps = {
-  params: Record<string, string>; // Fixes lint error
+  params: {}; // you are not using any dynamic route param, so leave it as {}
   searchParams?: {
     title?: string;
     categoryId?: string;
