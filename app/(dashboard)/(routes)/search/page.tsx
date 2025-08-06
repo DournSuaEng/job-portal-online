@@ -6,13 +6,15 @@ import CategoriesList from "./_components/categories-list";
 import PageContent from "./_components/page-content";
 import AppliedFilters from "./_components/applied-filters";
 
-// Optional: Add metadata (delete if not needed)
+// Optional metadata (SEO)
 export const metadata = {
   title: "Search Jobs",
   description: "Find and filter jobs that match your interests and experience.",
 };
 
-type SearchProps = {
+// Fix: use correct props structure
+type PageProps = {
+  params: {}; // not used in this page
   searchParams?: {
     title?: string;
     categoryId?: string;
@@ -23,7 +25,7 @@ type SearchProps = {
   };
 };
 
-const SearchPage = async ({ searchParams = {} }: SearchProps) => {
+const SearchPage = async ({ searchParams = {} }: PageProps) => {
   const {
     title = "",
     categoryId,
@@ -52,12 +54,9 @@ const SearchPage = async ({ searchParams = {} }: SearchProps) => {
 
   return (
     <>
-      {/* Search bar (mobile only) */}
       <div className="px-6 pt-6 block md:hidden md:mb-0">
         <SearchContainer />
       </div>
-
-      {/* Main content */}
       <div className="p-6">
         <CategoriesList categories={categories} />
         <AppliedFilters categories={categories} />
