@@ -1,5 +1,3 @@
-// app/(dashboard)/(routes)/search/page.tsx
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import SearchContainer from "@/components/search-container";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
@@ -8,39 +6,26 @@ import CategoriesList from "./_components/categories-list";
 import PageContent from "./_components/page-content";
 import AppliedFilters from "./_components/applied-filters";
 
-// ✅ Optional metadata
-export const metadata = {
-  title: "Search Jobs",
-  description: "Browse and filter jobs that match your preferences.",
-};
-
-// ✅ Correct PageProps type for App Router
 type PageProps = {
-  params: Promise<Record<string, never>>; // Empty object wrapped in Promise
-  searchParams: Promise<{
+  searchParams?: {
     title?: string;
     categoryId?: string;
     createdAtFilter?: string;
     shiftTiming?: string;
     workMode?: string;
     yearsOfExperience?: string;
-  }>;
+  };
 };
 
-// ✅ Final Component
-const SearchPage = async ({ params, searchParams }: PageProps) => {
-  // Await params (unused, but required)
-  await params;
-
-  // Await searchParams before destructuring
+const SearchPage = async ({ searchParams = {} }: PageProps) => {
   const {
     title = "",
-    categoryId,
-    createdAtFilter,
-    shiftTiming,
-    workMode,
-    yearsOfExperience,
-  } = await searchParams;
+    categoryId = "",
+    createdAtFilter = "",
+    shiftTiming = "",
+    workMode = "",
+    yearsOfExperience = "",
+  } = searchParams;
 
   const categories = await db.category.findMany({
     orderBy: {
@@ -65,17 +50,14 @@ const SearchPage = async ({ params, searchParams }: PageProps) => {
         <SearchContainer />
       </div>
       <div className="p-6">
-        {/* Categories */}
+        {/* categories */}
         <CategoriesList categories={categories} />
 
-        {/* Applied Filters */}
+        {/* applied filters */}
         <AppliedFilters categories={categories} />
 
-        {/* Page Content */}
+        {/* page content */}
         <PageContent jobs={jobs} userId={userId} />
-
-        {/* Add SpeedInsights for performance monitoring */}
-        <SpeedInsights />
       </div>
     </>
   );
