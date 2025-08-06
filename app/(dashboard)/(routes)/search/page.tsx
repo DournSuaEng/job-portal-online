@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import SearchContainer from "@/components/search-container";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
@@ -6,19 +7,27 @@ import CategoriesList from "./_components/categories-list";
 import PageContent from "./_components/page-content";
 import AppliedFilters from "./_components/applied-filters";
 
+// Use this if all searchParams are optional
 type SearchProps = {
-  searchParams: {
-    title: string;
-    categoryId: string;
-    createdAtFilter: string;
-    shiftTiming: string;
-    workMode: string;
-    yearsOfExperience: string;
+  searchParams?: {
+    title?: string;
+    categoryId?: string;
+    createdAtFilter?: string;
+    shiftTiming?: string;
+    workMode?: string;
+    yearsOfExperience?: string;
   };
 };
 
-const SearchPage = async ({ searchParams }: SearchProps) => {
-  const { title, categoryId, createdAtFilter, shiftTiming, workMode, yearsOfExperience } = searchParams;
+const SearchPage = async ({ searchParams = {} }: SearchProps) => {
+  const {
+    title = "",
+    categoryId,
+    createdAtFilter,
+    shiftTiming,
+    workMode,
+    yearsOfExperience,
+  } = searchParams;
 
   const categories = await db.category.findMany({
     orderBy: {
@@ -43,13 +52,8 @@ const SearchPage = async ({ searchParams }: SearchProps) => {
         <SearchContainer />
       </div>
       <div className="p-6">
-        {/* categories */}
         <CategoriesList categories={categories} />
-
-        {/* applied filters */}
         <AppliedFilters categories={categories} />
-
-        {/* page content */}
         <PageContent jobs={jobs} userId={userId} />
       </div>
     </>
