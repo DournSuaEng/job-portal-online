@@ -1,3 +1,4 @@
+// app/(dashboard)/(routes)/search/page.tsx
 import SearchContainer from "@/components/search-container";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
@@ -14,7 +15,7 @@ export const metadata = {
 
 // ✅ Correct PageProps type for App Router
 type PageProps = {
-  params: {}; // not used, but required by framework
+  params: Record<string, never>; // Explicitly empty object, no properties expected
   searchParams?: {
     title?: string;
     categoryId?: string;
