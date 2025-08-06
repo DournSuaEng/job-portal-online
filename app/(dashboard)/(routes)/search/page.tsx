@@ -6,7 +6,7 @@ import CategoriesList from "./_components/categories-list";
 import PageContent from "./_components/page-content";
 import AppliedFilters from "./_components/applied-filters";
 
-interface SearchProps {
+type SearchProps ={
   searchParams: {
     title: string;
     categoryId: string;
