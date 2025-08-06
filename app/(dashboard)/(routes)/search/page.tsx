@@ -6,7 +6,7 @@ import CategoriesList from "./_components/categories-list";
 import PageContent from "./_components/page-content";
 import AppliedFilters from "./_components/applied-filters";
 
-type SearchProps ={
+type SearchProps = {
   searchParams: {
     title: string;
     categoryId: string;
@@ -15,11 +15,10 @@ type SearchProps ={
     workMode: string;
     yearsOfExperience: string;
   };
-}
+};
 
 const SearchPage = async ({ searchParams }: SearchProps) => {
-  // Await the searchParams to ensure they're resolved before use
-  const { title, categoryId, createdAtFilter, shiftTiming, workMode, yearsOfExperience } = await searchParams;
+  const { title, categoryId, createdAtFilter, shiftTiming, workMode, yearsOfExperience } = searchParams;
 
   const categories = await db.category.findMany({
     orderBy: {
@@ -28,6 +27,7 @@ const SearchPage = async ({ searchParams }: SearchProps) => {
   });
 
   const { userId } = await auth();
+
   const jobs = await getJobs({
     title,
     categoryId,
@@ -43,16 +43,14 @@ const SearchPage = async ({ searchParams }: SearchProps) => {
         <SearchContainer />
       </div>
       <div className="p-6">
-        {/* categories  */}
+        {/* categories */}
         <CategoriesList categories={categories} />
 
         {/* applied filters */}
-        <AppliedFilters  categories={categories}/>
+        <AppliedFilters categories={categories} />
 
         {/* page content */}
         <PageContent jobs={jobs} userId={userId} />
-
-        
       </div>
     </>
   );
