@@ -6,15 +6,15 @@ import CategoriesList from "./_components/categories-list";
 import PageContent from "./_components/page-content";
 import AppliedFilters from "./_components/applied-filters";
 
-// Optional SEO metadata
+// ✅ Optional metadata
 export const metadata = {
   title: "Search Jobs",
-  description: "Find jobs filtered by role, category, experience, and more.",
+  description: "Browse and filter jobs that match your preferences.",
 };
 
-// ✅ Correct PageProps type for Next.js App Router
+// ✅ Correct PageProps type for App Router
 type PageProps = {
-  params: {}; // you are not using any dynamic route param, so leave it as {}
+  params: {}; // not used, but required by framework
   searchParams?: {
     title?: string;
     categoryId?: string;
@@ -25,6 +25,7 @@ type PageProps = {
   };
 };
 
+// ✅ Final Component
 const SearchPage = async ({ searchParams = {} }: PageProps) => {
   const {
     title = "",
@@ -58,8 +59,13 @@ const SearchPage = async ({ searchParams = {} }: PageProps) => {
         <SearchContainer />
       </div>
       <div className="p-6">
+        {/* Categories */}
         <CategoriesList categories={categories} />
+
+        {/* Applied Filters */}
         <AppliedFilters categories={categories} />
+
+        {/* Page Content */}
         <PageContent jobs={jobs} userId={userId} />
       </div>
     </>
