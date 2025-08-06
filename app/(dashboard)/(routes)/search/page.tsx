@@ -6,11 +6,18 @@ import CategoriesList from "./_components/categories-list";
 import PageContent from "./_components/page-content";
 import AppliedFilters from "./_components/applied-filters";
 
-type PageProps = {
-  searchParams: Record<string, string | undefined>;
+type SearchProps = {
+  searchParams: {
+    title: string;
+    categoryId: string;
+    createdAtFilter: string;
+    shiftTiming: string;
+    workMode: string;
+    yearsOfExperience: string;
+  };
 };
 
-const SearchPage = async ({ searchParams }: PageProps) => {
+const SearchPage = async ({ searchParams }: SearchProps) => {
   const { title, categoryId, createdAtFilter, shiftTiming, workMode, yearsOfExperience } = searchParams;
 
   const categories = await db.category.findMany({
@@ -36,8 +43,13 @@ const SearchPage = async ({ searchParams }: PageProps) => {
         <SearchContainer />
       </div>
       <div className="p-6">
+        {/* categories */}
         <CategoriesList categories={categories} />
+
+        {/* applied filters */}
         <AppliedFilters categories={categories} />
+
+        {/* page content */}
         <PageContent jobs={jobs} userId={userId} />
       </div>
     </>
