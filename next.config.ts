@@ -5,9 +5,7 @@ const nextConfig: NextConfig = {
   images: {
     domains: ["utfs.io", "img.clerk.com"],
   },
-  typescript: {
-    ignoreBuildErrors: false,
-  },
+ 
   
 };
 
