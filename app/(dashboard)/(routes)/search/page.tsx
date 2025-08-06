@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+
 import SearchContainer from "@/components/search-container";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
