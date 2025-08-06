@@ -8,12 +8,12 @@ import AppliedFilters from "./_components/applied-filters";
 
 type SearchProps = {
   searchParams: {
-    title: string;
-    categoryId: string;
-    createdAtFilter: string;
-    shiftTiming: string;
-    workMode: string;
-    yearsOfExperience: string;
+    title?: string;
+    categoryId?: string;
+    createdAtFilter?: string;
+    shiftTiming?: string;
+    workMode?: string;
+    yearsOfExperience?: string;
   };
 };
 
@@ -43,13 +43,8 @@ const SearchPage = async ({ searchParams }: SearchProps) => {
         <SearchContainer />
       </div>
       <div className="p-6">
-        {/* categories */}
         <CategoriesList categories={categories} />
-
-        {/* applied filters */}
         <AppliedFilters categories={categories} />
-
-        {/* page content */}
         <PageContent jobs={jobs} userId={userId} />
       </div>
     </>
