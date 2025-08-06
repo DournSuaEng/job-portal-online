@@ -16,19 +16,23 @@ export const metadata = {
 
 // ✅ Correct PageProps type for App Router
 type PageProps = {
-  params: Record<string, never>; // Explicitly empty object, no properties expected
-  searchParams?: {
+  params: Promise<Record<string, never>>; // Empty object wrapped in Promise
+  searchParams: Promise<{
     title?: string;
     categoryId?: string;
     createdAtFilter?: string;
     shiftTiming?: string;
     workMode?: string;
     yearsOfExperience?: string;
-  };
+  }>;
 };
 
 // ✅ Final Component
-const SearchPage = async ({ searchParams = {} }: PageProps) => {
+const SearchPage = async ({ params, searchParams }: PageProps) => {
+  // Await params (unused, but required)
+  await params;
+
+  // Await searchParams before destructuring
   const {
     title = "",
     categoryId,
@@ -36,7 +40,7 @@ const SearchPage = async ({ searchParams = {} }: PageProps) => {
     shiftTiming,
     workMode,
     yearsOfExperience,
-  } = searchParams;
+  } = await searchParams;
 
   const categories = await db.category.findMany({
     orderBy: {
