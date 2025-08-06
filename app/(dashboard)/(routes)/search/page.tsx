@@ -1,4 +1,3 @@
-
 import SearchContainer from "@/components/search-container";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
@@ -7,7 +6,12 @@ import CategoriesList from "./_components/categories-list";
 import PageContent from "./_components/page-content";
 import AppliedFilters from "./_components/applied-filters";
 
-// Use this if all searchParams are optional
+// Optional: Add metadata (delete if not needed)
+export const metadata = {
+  title: "Search Jobs",
+  description: "Find and filter jobs that match your interests and experience.",
+};
+
 type SearchProps = {
   searchParams?: {
     title?: string;
@@ -48,9 +52,12 @@ const SearchPage = async ({ searchParams = {} }: SearchProps) => {
 
   return (
     <>
+      {/* Search bar (mobile only) */}
       <div className="px-6 pt-6 block md:hidden md:mb-0">
         <SearchContainer />
       </div>
+
+      {/* Main content */}
       <div className="p-6">
         <CategoriesList categories={categories} />
         <AppliedFilters categories={categories} />
