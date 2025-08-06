@@ -59,7 +59,7 @@ export default async function JobDetailsPage({ params }: { params: Promise<{ job
           <Box className="flex-col my-4 items-start justify-start px-4 gap-2">
             <h2 className="text-lg font-semibold">Related Jobs:</h2>
           </Box>
-          <PageContent jobs={filteredJobs} userId={userId} />
+          <PageContent  userId={userId} jobs={[job]} job={[job]}  />
         </>
       )}
     </div>

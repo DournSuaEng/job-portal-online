@@ -11,6 +11,7 @@ type JobWithCompany = Job & { company: Company | null };
 
 interface PageContentProps {
   jobs: JobWithCompany[];
+  job: Job[];
   userId: string | null;
 }
 
