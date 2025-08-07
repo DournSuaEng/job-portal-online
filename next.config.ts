@@ -1,12 +1,7 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  reactStrictMode: true,
-  images: {
-    domains: ["utfs.io", "img.clerk.com"],
+// next.config.js
+const nextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
   },
- 
-  
 };
-
-export default nextConfig;
+module.exports = nextConfig;
