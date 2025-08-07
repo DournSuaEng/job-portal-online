@@ -1,18 +1,17 @@
 {
-  "version": 2,
-  "builds": [
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
     {
-      "src": "package.json",
-      "use": "@vercel/next"
+      "path": "/api/every-minute",
+      "schedule": "* * * * *"
     },
     {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "source": "/feedback/(?!general)",
-  "destination": "/api/feedback/general",
-   "buildCommand": "next build"
-}
-
- 
-
+      "path": "/api/every-hour",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/every-day",
+      "schedule": "0 0 * * *"
+    }
   ]
 }
