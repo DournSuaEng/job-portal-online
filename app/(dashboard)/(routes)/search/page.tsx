@@ -6,18 +6,21 @@ import CategoriesList from "./_components/categories-list";
 import PageContent from "./_components/page-content";
 import AppliedFilters from "./_components/applied-filters";
 
-type PageProps = {
-  searchParams?: {
-    title?: string;
-    categoryId?: string;
-    createdAtFilter?: string;
-    shiftTiming?: string;
-    workMode?: string;
-    yearsOfExperience?: string;
-  };
+type SearchParams = {
+  title?: string;
+  categoryId?: string;
+  createdAtFilter?: string;
+  shiftTiming?: string;
+  workMode?: string;
+  yearsOfExperience?: string;
 };
 
-const SearchPage = async ({ searchParams = {} }: PageProps) => {
+type SearchProps = {
+  searchParams?: Promise<SearchParams>;
+};
+
+const SearchPage = async ({ searchParams }: SearchProps) => {
+  const params = await (searchParams ?? Promise.resolve({} as SearchParams));
   const {
     title = "",
     categoryId = "",
@@ -25,7 +28,7 @@ const SearchPage = async ({ searchParams = {} }: PageProps) => {
     shiftTiming = "",
     workMode = "",
     yearsOfExperience = "",
-  } = searchParams;
+  } = params;
 
   const categories = await db.category.findMany({
     orderBy: {
