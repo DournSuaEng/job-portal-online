@@ -2,13 +2,14 @@ import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-export const PATCH = async (
-  req: Request,
-  { params }: { params: { companyId: string } }
-) => {
+interface Params {
+  params: { companyId: string };
+}
+
+export const PATCH = async (req: Request, { params }: Params) => {
   try {
     // Authenticate the user and get their ID
-    const  userId =await auth(); // auth() is synchronous in @clerk/nextjs/server
+    const { userId } = await auth();
 
     // Destructure the companyId from params
     const { companyId } = params;
