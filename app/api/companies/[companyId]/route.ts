@@ -8,7 +8,7 @@ export const PATCH = async (
 ) => {
   try {
     // Authenticate the user and get their ID
-    const { userId } =await auth(); // auth() is synchronous in @clerk/nextjs/server
+    const  userId =await auth(); // auth() is synchronous in @clerk/nextjs/server
 
     // Destructure the companyId from params
     const { companyId } = params;
